@@ -7,11 +7,14 @@ import org.geotools.geojson.geom.GeometryJSON;
 import java.io.IOException;
 
 public class GeoJsonUtils {
-	public static final int DECIMAL_PRECISION = 15;
+    public static final int DECIMAL_PRECISION = 15;
 
-	static String convertToGeoJSON(SimpleFeatureCollection featureCollection) throws IOException {
-		GeometryJSON geometryJSON = new GeometryJSON(DECIMAL_PRECISION);
-		FeatureJSON featureJSON = new FeatureJSON(geometryJSON);
-		return featureJSON.toString(featureCollection);
-	}
+    private GeoJsonUtils() {
+    }
+
+    static String convertToGeoJSON(SimpleFeatureCollection featureCollection) throws IOException {
+        GeometryJSON geometryJSON = new GeometryJSON(DECIMAL_PRECISION);
+        FeatureJSON featureJSON = new FeatureJSON(geometryJSON);
+        return featureJSON.toString(featureCollection);
+    }
 }

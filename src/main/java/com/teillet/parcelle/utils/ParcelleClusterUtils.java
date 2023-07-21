@@ -14,36 +14,39 @@ import java.util.List;
 
 public class ParcelleClusterUtils {
 
-	public static String parcellesClusterToGeoJson(List<ParcelleClusterDto> parcelleClusterDtos) throws IOException {
-		SimpleFeatureType featureType = createFeatureType();
+    private ParcelleClusterUtils() {
+    }
 
-		SimpleFeatureCollection featureCollection = createFeatureCollection(parcelleClusterDtos, featureType);
+    public static String parcellesClusterToGeoJson(List<ParcelleClusterDto> parcelleClusterDtos) throws IOException {
+        SimpleFeatureType featureType = createFeatureType();
 
-		return GeoJsonUtils.convertToGeoJSON(featureCollection);
-	}
+        SimpleFeatureCollection featureCollection = createFeatureCollection(parcelleClusterDtos, featureType);
 
-	private static SimpleFeatureType createFeatureType() {
-		SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
-		builder.setName("ParcelleCluster");
-		builder.add("ids", List.class);
-		builder.add("geometry", Geometry.class);
-		return builder.buildFeatureType();
-	}
+        return GeoJsonUtils.convertToGeoJSON(featureCollection);
+    }
 
-	private static SimpleFeatureCollection createFeatureCollection(List<ParcelleClusterDto> parcelleClusterDtos, SimpleFeatureType featureType) {
-		SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureType);
+    private static SimpleFeatureType createFeatureType() {
+        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        builder.setName("ParcelleCluster");
+        builder.add("ids", List.class);
+        builder.add("geometry", Geometry.class);
+        return builder.buildFeatureType();
+    }
 
-		return parcelleClusterDtos
-				.stream()
-				.map(parcelleClusterDto -> createSimpleFeature(featureBuilder, parcelleClusterDto))
-				.collect(() -> new ListFeatureCollection(featureType), ListFeatureCollection::add, ListFeatureCollection::addAll);
-	}
+    private static SimpleFeatureCollection createFeatureCollection(List<ParcelleClusterDto> parcelleClusterDtos, SimpleFeatureType featureType) {
+        SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureType);
 
-	private static SimpleFeature createSimpleFeature(SimpleFeatureBuilder featureBuilder, ParcelleClusterDto parcelleClusterDtos) {
-		featureBuilder.add(parcelleClusterDtos.getIntersectingIds());
-		featureBuilder.add(parcelleClusterDtos.getGeometry());
+        return parcelleClusterDtos
+                .stream()
+                .map(parcelleClusterDto -> createSimpleFeature(featureBuilder, parcelleClusterDto))
+                .collect(() -> new ListFeatureCollection(featureType), ListFeatureCollection::add, ListFeatureCollection::addAll);
+    }
 
-		return featureBuilder.buildFeature(null);
-	}
+    private static SimpleFeature createSimpleFeature(SimpleFeatureBuilder featureBuilder, ParcelleClusterDto parcelleClusterDtos) {
+        featureBuilder.add(parcelleClusterDtos.getIntersectingIds());
+        featureBuilder.add(parcelleClusterDtos.getGeometry());
+
+        return featureBuilder.buildFeature(null);
+    }
 
 }
