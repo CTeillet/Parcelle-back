@@ -3,12 +3,12 @@ package com.teillet.parcelle.service.impl;
 import com.teillet.parcelle.model.Parcelle;
 import com.teillet.parcelle.repository.ParcelleRepository;
 import com.teillet.parcelle.service.IParcelleService;
-import io.micrometer.core.annotation.Timed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @AllArgsConstructor
@@ -22,13 +22,11 @@ public class ParcelleService implements IParcelleService {
     }
 
     @Override
-    @Timed(value = "parcelleService.enregistrementLotParcelle", description = "Time taken to save a list of parcelles.")
     public List<Parcelle> enregistrementLotParcelle(List<Parcelle> parcelles) {
         return parcelleRepository.saveAll(parcelles);
     }
 
     @Override
-    @Timed(value = "parcelleService.recuperationParcelles", description = "Time taken to delete a list of parcelles.")
     public boolean suppressionParcelles(List<String> ids) {
         log.info("Nombre de parcelles à supprimer : " + ids.size());
         int nbParcellesSupprimees = parcelleRepository.updateSupprimeByIdIn(ids);
@@ -37,15 +35,13 @@ public class ParcelleService implements IParcelleService {
     }
 
     @Override
-    @Timed(value = "parcelleService.recuperationParcellesNonSupprimees", description = "Time taken to get all parcelles not deleted.")
-    public List<Parcelle> recuperationParcellesNonSupprimees() {
-        return parcelleRepository.findBySupprimeFalse();
+    public CompletableFuture<List<Parcelle>> recuperationParcellesNonSupprimees() {
+        return CompletableFuture.completedFuture(parcelleRepository.findBySupprimeFalse());
     }
 
     @Override
-    @Timed(value = "parcelleService.recuperationParcelleParId", description = "Time taken to get a parcelle by id.")
-    public Parcelle recuperationParcelleParId(String id) {
-        return parcelleRepository.findById(id).orElse(null);
+    public CompletableFuture<Parcelle> recuperationParcelleParId(String id) {
+        return CompletableFuture.completedFuture(parcelleRepository.findById(id).orElse(null));
     }
 
     @Override

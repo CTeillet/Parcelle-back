@@ -15,49 +15,53 @@ import java.util.List;
 
 public class ParcelleUtils {
 
-	public static String parcellesToGeoJson(List<Parcelle> parcelles) throws IOException {
-		// Créer la structure du schéma des entités GeoJSON
-		SimpleFeatureType featureType = createFeatureType();
+    private ParcelleUtils() {
+        throw new IllegalStateException("Utility class");
+    }
 
-		// Créer une collection des entités GeoJSON
-		SimpleFeatureCollection featureCollection = createFeatureCollection(parcelles, featureType);
+    public static String parcellesToGeoJson(List<Parcelle> parcelles) throws IOException {
+        // Créer la structure du schéma des entités GeoJSON
+        SimpleFeatureType featureType = createFeatureType();
 
-		// Convertir la collection des entités en GeoJSON
-		return GeoJsonUtils.convertToGeoJSON(featureCollection);
-	}
+        // Créer une collection des entités GeoJSON
+        SimpleFeatureCollection featureCollection = createFeatureCollection(parcelles, featureType);
 
-	private static SimpleFeatureCollection createFeatureCollection(List<Parcelle> parcelles, SimpleFeatureType featureType) {
-		SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureType);
+        // Convertir la collection des entités en GeoJSON
+        return GeoJsonUtils.convertToGeoJSON(featureCollection);
+    }
 
-		return parcelles
-				.stream()
-				.map(parcelle -> createSimpleFeature(featureBuilder, parcelle))
-				.collect(() -> new ListFeatureCollection(featureType), ListFeatureCollection::add, ListFeatureCollection::addAll);
-	}
+    private static SimpleFeatureCollection createFeatureCollection(List<Parcelle> parcelles, SimpleFeatureType featureType) {
+        SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureType);
 
-	private static SimpleFeature createSimpleFeature(SimpleFeatureBuilder featureBuilder, Parcelle parcelle) {
-		featureBuilder.add(parcelle.getId());
-		featureBuilder.add(parcelle.getSurface());
-		featureBuilder.add(parcelle.getCommune().getNomCom());
-		featureBuilder.add(parcelle.getGeom());
-		featureBuilder.add(parcelle.getAdresse());
+        return parcelles
+                .stream()
+                .map(parcelle -> createSimpleFeature(featureBuilder, parcelle))
+                .collect(() -> new ListFeatureCollection(featureType), ListFeatureCollection::add, ListFeatureCollection::addAll);
+    }
 
-		return featureBuilder.buildFeature(null);
-	}
+    private static SimpleFeature createSimpleFeature(SimpleFeatureBuilder featureBuilder, Parcelle parcelle) {
+        featureBuilder.add(parcelle.getId());
+        featureBuilder.add(parcelle.getSurface());
+        featureBuilder.add(parcelle.getCommune().getNomCom());
+        featureBuilder.add(parcelle.getGeom());
+        featureBuilder.add(parcelle.getAdresse());
 
-	private static SimpleFeatureType createFeatureType() {
-		SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
-		builder.setName("Parcelle");
-		builder.add("id", String.class);
-		builder.add("surface", Integer.class);
-		builder.add("commune", String.class);
-		builder.add("geometry", Geometry.class);
-		builder.add("adresse", Adresse.class);
-		return builder.buildFeatureType();
-	}
+        return featureBuilder.buildFeature(null);
+    }
 
-	public static String parcelleToGeoJson(Parcelle p) throws IOException {
-		return parcellesToGeoJson(List.of(p));
-	}
+    private static SimpleFeatureType createFeatureType() {
+        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        builder.setName("Parcelle");
+        builder.add("id", String.class);
+        builder.add("surface", Integer.class);
+        builder.add("commune", String.class);
+        builder.add("geometry", Geometry.class);
+        builder.add("adresse", Adresse.class);
+        return builder.buildFeatureType();
+    }
+
+    public static String parcelleToGeoJson(Parcelle p) throws IOException {
+        return parcellesToGeoJson(List.of(p));
+    }
 
 }

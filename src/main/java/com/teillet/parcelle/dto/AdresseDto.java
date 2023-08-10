@@ -12,21 +12,21 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 public class AdresseDto {
-	public String id;
-	public String codeVoie;
-	public String codeCommune;
-	public String numeroComplet;
-	public String numero;
-	public String repetition;
-	public boolean pseudoNumero;
-	public String nomVoie;
-	public String nomVoieOriginal;
-	public String nomVoieType;
-	public String nomVoieFantoir;
-	public List<PositionDto> positions;
-	public PositionDto meilleurePosition;
-	public String destinationPrincipale;
-	public boolean adresseUtile;
-	public List<String> codesParcelles;
-	public List<String> tags;
+    private String id;
+    private String codeVoie;
+    private String codeCommune;
+    private String numeroComplet;
+    private String numero;
+    private String repetition;
+    private boolean pseudoNumero;
+    private String nomVoie;
+    private String nomVoieOriginal;
+    private String nomVoieType;
+    private String nomVoieFantoir;
+    private List<PositionDto> positions;
+    private PositionDto meilleurePosition;
+    private String destinationPrincipale;
+    private boolean adresseUtile;
+    private List<String> codesParcelles;
+    private List<String> tags;
 }

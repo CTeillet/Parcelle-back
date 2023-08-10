@@ -23,6 +23,7 @@ import java.util.List;
 @Transactional
 @Slf4j
 public class InitialisationCommune implements CommandLineRunner {
+    public static final String DEPARTEMENT = "ESSONNE";
     private final ICommuneService communeService;
 
     @Override
@@ -32,12 +33,18 @@ public class InitialisationCommune implements CommandLineRunner {
         }
 
         log.info("Début import communes");
-        //Read Json from file ressources/json/code-postal-code-insee-2015@public.json
+        //Read Json from file ressources/json/code-postal-code-insee-2015.json
         ObjectMapper mapper = new ObjectMapper();
-        List<CommuneDto> communeDtos = mapper.readValue(new ClassPathResource("json/code-postal-code-insee-2015.json").getFile(),
-                new TypeReference<>() {
-                });
+        log.info("Lecture du fichier json");
+        List<CommuneDto> communeDtos = mapper.readValue(
+                new ClassPathResource("json/code-postal-code-insee-2015.json").getFile(), new TypeReference<>() {
+                }
+        );
+        //Filter communeDtos to keep only communes from Essonne
+        communeDtos = communeDtos.parallelStream().filter(communeDto -> communeDto.getNomDept().equals(DEPARTEMENT)).toList();
+        log.info("Fin lecture du fichier json");
         List<Commune> communes = CommuneMapper.MAPPER.toEntity(communeDtos);
+        log.info("Nombre de communes : " + communes.size());
         List<Commune> communesSauvegardes = communeService.enregistrementLotCommune(communes);
         log.info("Nombre de communes sauvegardées : " + communesSauvegardes.size());
     }
