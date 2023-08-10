@@ -14,7 +14,7 @@ RUN mkdir /app
 
 RUN addgroup -g 1001 -S parcellegroup
 
-RUN adduser -S teco -u 1001
+RUN adduser -S parcelle -u 1001
 
 COPY --from=build /project/target/*.jar /app/parcelle.jar
 
