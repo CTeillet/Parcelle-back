@@ -10,6 +10,7 @@ public class GeoJsonUtils {
     public static final int DECIMAL_PRECISION = 15;
 
     private GeoJsonUtils() {
+        throw new IllegalStateException("Utility class");
     }
 
     static String convertToGeoJSON(SimpleFeatureCollection featureCollection) throws IOException {

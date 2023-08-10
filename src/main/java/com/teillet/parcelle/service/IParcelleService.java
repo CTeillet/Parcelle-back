@@ -1,24 +1,28 @@
 package com.teillet.parcelle.service;
 
 import com.teillet.parcelle.model.Parcelle;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public interface IParcelleService {
-	Long nombreParcelle();
+    Long nombreParcelle();
 
-	List<Parcelle> enregistrementLotParcelle(List<Parcelle> parcelles);
+    List<Parcelle> enregistrementLotParcelle(List<Parcelle> parcelles);
 
-	boolean suppressionParcelles(List<String> ids);
+    boolean suppressionParcelles(List<String> ids);
 
-	List<Parcelle> recuperationParcellesNonSupprimees();
+    @Async
+    CompletableFuture<List<Parcelle>> recuperationParcellesNonSupprimees();
 
-	Parcelle recuperationParcelleParId(String id);
+    @Async
+    CompletableFuture<Parcelle> recuperationParcelleParId(String id);
 
-	List<Parcelle> recuperationParcellesNonLieesAdresse();
+    List<Parcelle> recuperationParcellesNonLieesAdresse();
 
-	void enregistrementParcelle(Parcelle parcelle);
+    void enregistrementParcelle(Parcelle parcelle);
 
-	Long nombreParcelleLieesAdresse();
+    Long nombreParcelleLieesAdresse();
 
 }

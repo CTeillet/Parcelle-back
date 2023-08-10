@@ -20,17 +20,19 @@ public class LiaisonParcelleAdresse implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (parcelleService.nombreParcelleLieesAdresse() > 0) {
+        if (adresseService.nombreAdresse() == 0 || parcelleService.nombreParcelleLieesAdresse() > 0) {
             return;
         }
         log.info("Début liaison parcelle adresse");
-        parcelleService.recuperationParcellesNonLieesAdresse().parallelStream().forEach(this::miseAJourAdresseParcelle);
+        parcelleService.recuperationParcellesNonLieesAdresse().forEach(this::miseAJourAdresseParcelle);
         log.info("Fin liaison parcelle adresse");
     }
 
     private void miseAJourAdresseParcelle(Parcelle parcelle) {
+        log.info("Mise à jour de l'adresse de la parcelle {}", parcelle.getId());
         Adresse adresse = adresseService.recuperationAdresseCorrespondantParcelle(parcelle.getId());
         if (adresse != null) {
+            log.info("Adresse {} correspondant à la parcelle {}", adresse.getId(), parcelle.getId());
             parcelle.setAdresse(adresse);
             parcelleService.enregistrementParcelle(parcelle);
         } else {

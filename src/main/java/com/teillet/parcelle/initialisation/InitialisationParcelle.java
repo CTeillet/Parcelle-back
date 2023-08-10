@@ -28,7 +28,7 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 public class InitialisationParcelle implements CommandLineRunner {
-    public static final int TAILLE_TAMPON = 5000;
+    public static final int TAILLE_TAMPON = 1000;
 
     private final IParcelleService parcelleService;
 
@@ -52,6 +52,7 @@ public class InitialisationParcelle implements CommandLineRunner {
     }
 
     private void lectureEtSauvegardeParcelles(String path) {
+        log.info("Lecture du fichier {}", path);
         try (GeoJSONReader geoJSONReader = new GeoJSONReader(new ClassPathResource(path).getFile().toURI().toURL())) {
             SimpleFeatureCollection features = geoJSONReader.getFeatures();
             log.info("Nombre de parcelles a importées " + features.size());
@@ -76,10 +77,13 @@ public class InitialisationParcelle implements CommandLineRunner {
                     Parcelle parcelle = ParcelleMapper.MAPPER.toEntity(parcelleDto, communeRepository);
                     parcellesTampon.add(parcelle);
                     if (parcellesTampon.size() == TAILLE_TAMPON) {
+                        log.info("Tampon atteint, sauvegarde des parcelles");
                         i = sauvegardeParcelleEtIncrementeI(i, parcellesTampon);
                     }
                 }
+                log.info("Fin de la lecture des parcelles");
                 i = sauvegardeParcelleEtIncrementeI(i, parcellesTampon);
+                log.info("Fin de la sauvegarde des parcelles");
             }
             log.info("Nombre de parcelles sauvegardées : " + i);
         } catch (IOException ioException) {
@@ -88,12 +92,14 @@ public class InitialisationParcelle implements CommandLineRunner {
     }
 
     private int sauvegardeParcelleEtIncrementeI(int i, List<Parcelle> parcellesTampon) {
+        log.info("Nombre de parcelles à sauvegarder : " + parcellesTampon.size());
         List<Parcelle> parcelleSauvegarde = parcelleService.enregistrementLotParcelle(parcellesTampon);
-        i += parcelleSauvegarde.size();
-        if (parcelleSauvegarde.size() == parcellesTampon.size()) {
+        int nombreParcellesSauvegardees = parcelleSauvegarde.size();
+        i += nombreParcellesSauvegardees;
+        if (nombreParcellesSauvegardees == parcellesTampon.size()) {
             log.info("Nombre de parcelles sauvegardées : " + i);
         } else {
-            log.error("Problème lors de la sauvegarde des parcelles : {} parcelles à sauvegarder et {} parcelles sauvegardées", parcellesTampon.size(), parcelleSauvegarde.size());
+            log.error("Problème lors de la sauvegarde des parcelles : {} parcelles à sauvegarder et {} parcelles sauvegardées", parcellesTampon.size(), nombreParcellesSauvegardees);
         }
         parcellesTampon.clear();
         return i;

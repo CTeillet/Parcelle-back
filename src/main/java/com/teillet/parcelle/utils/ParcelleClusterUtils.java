@@ -15,6 +15,7 @@ import java.util.List;
 public class ParcelleClusterUtils {
 
     private ParcelleClusterUtils() {
+        throw new IllegalStateException("Utility class");
     }
 
     public static String parcellesClusterToGeoJson(List<ParcelleClusterDto> parcelleClusterDtos) throws IOException {
