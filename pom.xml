@@ -14,7 +14,7 @@
     <name>Parcelle</name>
     <description>Parcelle</description>
     <properties>
-        <java.version>19</java.version>
+        <java.version>20</java.version>
         <geotools.version>30-SNAPSHOT</geotools.version>
         <hibernate.version>6.2.3.Final</hibernate.version>
         <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
