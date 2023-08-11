@@ -70,6 +70,6 @@ jobs:
           context: .
           file: Dockerfile
           push: true
-          tags: tericcabrel/bmi:latest
+          tags: nono9196/parcelle:latest
 
       
