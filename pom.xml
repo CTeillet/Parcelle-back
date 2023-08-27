@@ -45,6 +45,10 @@
                 <enabled>false</enabled>
             </releases>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -141,9 +145,9 @@
         </dependency>
 
         <dependency>
-            <groupId>io.supabase</groupId>
+            <groupId>com.github.supabase-community</groupId>
             <artifactId>storage-java</artifactId>
-            <version>1.1.0</version>
+            <version>V1.1.0</version>
         </dependency>
 
         <dependency>
