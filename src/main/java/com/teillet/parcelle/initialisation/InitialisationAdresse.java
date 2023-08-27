@@ -6,8 +6,9 @@ import com.teillet.parcelle.mapper.AdresseMapper;
 import com.teillet.parcelle.repository.CommuneRepository;
 import com.teillet.parcelle.service.IAdresseService;
 import com.teillet.parcelle.utils.FileUtils;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
@@ -16,16 +17,23 @@ import org.springframework.stereotype.Component;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 
 @Order(3)
 @Component
-@AllArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public class InitialisationAdresse implements CommandLineRunner {
     private final IAdresseService adresseService;
     private final CommuneRepository communeRepository;
+
+    @Value("${fichier.adresse}")
+    private String fichierAdresse;
+
+    @Value("${code-postal.code-insee}")
+    private String codePostalCodeInsee;
 
     @Override
     public void run(String... args) throws IOException {
@@ -33,30 +41,22 @@ public class InitialisationAdresse implements CommandLineRunner {
             return;
         }
 
+        List<String> codePostauxValides = List.of(codePostalCodeInsee.split(";"));
         log.info("Début import adresses");
-        String path = "json/adresses-cadastre-91.ndjson.gz";
-
-
-        importAdresse(path);
+        importAdresse(fichierAdresse, codePostauxValides);
         log.info("Fin import adresses");
     }
 
-    private void importAdresse(String path) throws IOException {
+    private void importAdresse(String cheminFichier, List<String> codePostauxValides) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
 
-        File file = new ClassPathResource(path).getFile();
+        File file = new ClassPathResource(cheminFichier).getFile();
         try (BufferedReader br = FileUtils.openGzFile(file)) {
             br.lines()
                     .parallel()
                     .map(line -> getAdresseDto(mapper, line))
                     .filter(Objects::nonNull)
-                    // Only keep adresses with commune code 91027 91201 91326 91432 91479 91589
-                    .filter(adresseDto -> adresseDto.getCodeCommune().equals("91027")
-                            || adresseDto.getCodeCommune().equals("91201")
-                            || adresseDto.getCodeCommune().equals("91326")
-                            || adresseDto.getCodeCommune().equals("91432")
-                            || adresseDto.getCodeCommune().equals("91479")
-                            || adresseDto.getCodeCommune().equals("91589"))
+                    .filter(adresseDto -> codePostauxValides.contains(adresseDto.getCodeCommune()))
                     .map(adresseDto -> AdresseMapper.MAPPER.toEntity(adresseDto, communeRepository))
                     .forEach(adresseService::enregistrementAdresse);
         } catch (Exception e) {

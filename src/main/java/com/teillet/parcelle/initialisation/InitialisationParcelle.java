@@ -5,13 +5,14 @@ import com.teillet.parcelle.mapper.ParcelleMapper;
 import com.teillet.parcelle.model.Parcelle;
 import com.teillet.parcelle.repository.CommuneRepository;
 import com.teillet.parcelle.service.IParcelleService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.geotools.data.geojson.GeoJSONReader;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
@@ -25,14 +26,16 @@ import java.util.List;
 
 @Component
 @Order(2)
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class InitialisationParcelle implements CommandLineRunner {
     public static final int TAILLE_TAMPON = 1000;
 
     private final IParcelleService parcelleService;
-
     private final CommuneRepository communeRepository;
+
+    @Value("${fichier.parcelles}")
+    private String fichierParcelles;
 
     @Override
     public void run(String... args) {
@@ -41,13 +44,7 @@ public class InitialisationParcelle implements CommandLineRunner {
         }
 
         log.info("Début import parcelles");
-        String path = "json/cadastre-91027-parcelles.json";
-        String path1 = "json/cadastre-91201-parcelles.json";
-        String path2 = "json/cadastre-91326-parcelles.json";
-        String path3 = "json/cadastre-91432-parcelles.json";
-        String path4 = "json/cadastre-91479-parcelles.json";
-        String path5 = "json/cadastre-91589-parcelles.json";
-        List<String> fichiers = Arrays.asList(path, path1, path2, path3, path4, path5);
+        List<String> fichiers = List.of(fichierParcelles.split(";"));
         fichiers.forEach(this::lectureEtSauvegardeParcelles);
     }
 

@@ -8,8 +8,9 @@ import com.teillet.parcelle.mapper.CommuneMapper;
 import com.teillet.parcelle.model.Commune;
 import com.teillet.parcelle.service.ICommuneService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.ClassPathResource;
@@ -19,12 +20,22 @@ import java.util.List;
 
 @Component
 @Order(1)
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional
 @Slf4j
 public class InitialisationCommune implements CommandLineRunner {
     public static final String DEPARTEMENT = "ESSONNE";
+
     private final ICommuneService communeService;
+
+    @Value("${supabase.url}")
+    private String supabaseUrl;
+    @Value("${supabase.service.token}")
+    private String supabaseServiceToken;
+    @Value("${supabase.bucket.name}")
+    private String supabaseBucketName;
+    @Value("${fichier.code-postal}")
+    private String fichierCodePostal;
 
     @Override
     public void run(String... args) throws Exception {
@@ -36,8 +47,14 @@ public class InitialisationCommune implements CommandLineRunner {
         //Read Json from file ressources/json/code-postal-code-insee-2015.json
         ObjectMapper mapper = new ObjectMapper();
         log.info("Lecture du fichier json");
+
+
+//        IStorageClient storageClient = new StorageClient(supabaseServiceToken, supabaseUrl);
+//        storageClient.from(supabaseBucketName).download(fichierCodePostal, new ClassPathResource(fichierCodePostal).getFile());
+
+
         List<CommuneDto> communeDtos = mapper.readValue(
-                new ClassPathResource("json/code-postal-code-insee-2015.json").getFile(), new TypeReference<>() {
+                new ClassPathResource(fichierCodePostal).getFile(), new TypeReference<>() {
                 }
         );
         //Filter communeDtos to keep only communes from Essonne
