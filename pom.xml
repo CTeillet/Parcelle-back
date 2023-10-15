@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.0</version>
+        <version>3.1.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.teillet</groupId>
@@ -15,9 +15,9 @@
     <description>Parcelle</description>
     <properties>
         <java.version>20</java.version>
-        <geotools.version>30-SNAPSHOT</geotools.version>
-        <hibernate.version>6.2.3.Final</hibernate.version>
-        <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
+        <geotools.version>30.0</geotools.version>
+        <hibernate.version>6.3.1.Final</hibernate.version>
+        <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
         <jts.version>1.19.0</jts.version>
     </properties>
 
