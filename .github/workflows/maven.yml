@@ -1,9 +1,10 @@
-name: CI
+name: CI/CD
+
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   project-build:
@@ -30,12 +31,13 @@ jobs:
 
       - name: Run tests
         run: mvn --batch-mode --update-snapshots verify
-      
+
   docker-build:
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     needs:
       - project-build
+
     steps:
       - uses: actions/checkout@v3
 
@@ -51,6 +53,9 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+          
+      - name: Update system packages
+        run: sudo apt-get update && sudo apt-get upgrade -y
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -60,14 +65,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          # Obtenir le numéro du build
-          BUILD_NUMBER=${{ github.run_number }}
-          
-          # Construire l'image avec le pattern souhaité
-          docker build -t cteillet/parcelle:${BUILD_NUMBER} .
-
-          # Enregistrez l'image dans un fichier tar
-          docker save -o parcelle_${BUILD_NUMBER}.tar cteillet/parcelle:${BUILD_NUMBER}
+          docker build -t cteillet/parcelle:${{ github.run_number }} .
+          docker save -o parcelle_${{ github.run_number }}.tar cteillet/parcelle:${{ github.run_number }}
 
   deploy-to-vps:
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -80,12 +79,17 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          scp -i ~/.ssh/id_rsa parcelle_latest.tar ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST}}:/home/${{ secrets.SSH_USER}}/docker-images/parcelle_${BUILD_NUMBER}.tar
+          scp -i ~/.ssh/id_rsa parcelle_${{ github.run_number }}.tar ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST}}:/home/${{ secrets.SSH_USER}}/docker-images/
 
       - name: SSH into VPS and load Docker image
         run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST}} "docker load -i /home/${{ secrets.SSH_USER}}/docker-images/parcelle_${BUILD_NUMBER}.tar"
+          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST}} "docker load -i /home/${{ secrets.SSH_USER}}/docker-images/parcelle_${{ github.run_number }}.tar"
 
       - name: SSH into VPS and restart Docker container
         run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST}} "docker stop parcelle || true && docker rm parcelle || true && docker run -d -p 8080:8080 --name parcelle cteillet/parcelle:${BUILD_NUMBER}"
+          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST}} "docker stop parcelle || true && docker rm parcelle || true && docker run -d -p 8080:8080 --name parcelle cteillet/parcelle:${{ github.run_number }}"
+      
+      - name: Cleanup
+        run: |
+          rm -f parcelle_${{ github.run_number }}.tar
+          # Ajoutez d'autres commandes de nettoyage au besoin
