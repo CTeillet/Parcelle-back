@@ -79,6 +79,12 @@ jobs:
 
       - name: Quality Check with Checkstyle
         run: mvn checkstyle:check
+      
+      - name: Archive Checkstyle XML Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: checkstyle-report
+          path: target/site/checkstyle-result.xml
 
   docker-build:
     if: ${{ github.ref == 'refs/heads/main' }}
