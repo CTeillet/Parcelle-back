@@ -1,6 +1,9 @@
 package com.teillet.parcelle.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.teillet.parcelle.service.ISupabaseBucketService;
+import com.teillet.parcelle.service.ITemporaryFileService;
+import io.supabase.data.file.FileDownload;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -42,5 +45,13 @@ public class FileUtils {
             log.info("Fin lecture du fichier json. Nb éléments : {}", results.size());
             return results;
         }
+    }
+
+    public static String downloadFile(String fichier, ISupabaseBucketService supabaseBucketService, ITemporaryFileService temporaryFileService) throws Exception {
+        log.info("Téléchargement du fichier json");
+        FileDownload downloadFile = supabaseBucketService.downloadFile(fichier);
+        String pathDownloadedFile = temporaryFileService.saveTemporaryFile(downloadFile.getBytes(), fichier);
+        log.info("Fin téléchargement du fichier json");
+        return pathDownloadedFile;
     }
 }
