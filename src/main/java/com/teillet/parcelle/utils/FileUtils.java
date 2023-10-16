@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.zip.GZIPInputStream;
 
 @Slf4j
@@ -47,7 +48,7 @@ public class FileUtils {
         }
     }
 
-    public static String downloadFile(String fichier, ISupabaseBucketService supabaseBucketService, ITemporaryFileService temporaryFileService) throws Exception {
+    public static String downloadFile(String fichier, ISupabaseBucketService supabaseBucketService, ITemporaryFileService temporaryFileService) throws InterruptedException, ExecutionException, IOException {
         log.info("Téléchargement du fichier json");
         FileDownload downloadFile = supabaseBucketService.downloadFile(fichier);
         String pathDownloadedFile = temporaryFileService.saveTemporaryFile(downloadFile.getBytes(), fichier);

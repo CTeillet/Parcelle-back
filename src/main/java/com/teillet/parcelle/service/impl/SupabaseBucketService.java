@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.concurrent.ExecutionException;
+
 @Service
 @Slf4j
 public class SupabaseBucketService implements ISupabaseBucketService {
@@ -20,7 +22,7 @@ public class SupabaseBucketService implements ISupabaseBucketService {
 	private String supabaseBucketName;
 
 	@Override
-	public FileDownload downloadFile(String fileName) throws Exception {
+	public FileDownload downloadFile(String fileName) throws InterruptedException, ExecutionException {
 		log.info("Téléchargement du fichier " + fileName);
 		return getStorageFileAPI().download(fileName, null).get();
 	}

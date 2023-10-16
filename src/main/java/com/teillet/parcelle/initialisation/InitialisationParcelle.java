@@ -1,38 +1,37 @@
 package com.teillet.parcelle.initialisation;
 
-import com.teillet.parcelle.dto.ParcelleDto;
 import com.teillet.parcelle.mapper.ParcelleMapper;
-import com.teillet.parcelle.model.Parcelle;
 import com.teillet.parcelle.repository.CommuneRepository;
 import com.teillet.parcelle.service.IParcelleService;
+import com.teillet.parcelle.service.ISupabaseBucketService;
+import com.teillet.parcelle.service.ITemporaryFileService;
+import com.teillet.parcelle.utils.FileUtils;
+import com.teillet.parcelle.utils.GeoJsonUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.data.geojson.GeoJSONReader;
-import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureIterator;
-import org.locationtech.jts.geom.Polygon;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Stream;
 
 @Component
 @Order(2)
 @RequiredArgsConstructor
 @Slf4j
 public class InitialisationParcelle implements CommandLineRunner {
-    public static final int TAILLE_TAMPON = 1000;
 
     private final IParcelleService parcelleService;
     private final CommuneRepository communeRepository;
+    private final ITemporaryFileService temporaryFileService;
+    private final ISupabaseBucketService supabaseBucketService;
 
     @Value("${fichier.parcelles}")
     private String fichierParcelles;
@@ -40,66 +39,34 @@ public class InitialisationParcelle implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (parcelleService.nombreParcelle() > 0) {
+            log.info("Il y a déjà des parcelles enregistrées. L'import n'est pas nécessaire.");
             return;
         }
 
-        log.info("Début import parcelles");
+        log.info("Début de l'import des parcelles");
         List<String> fichiers = List.of(fichierParcelles.split(";"));
         fichiers.forEach(this::lectureEtSauvegardeParcelles);
+        log.info("Fin de l'import des parcelles");
     }
 
     private void lectureEtSauvegardeParcelles(String path) {
         log.info("Lecture du fichier {}", path);
-        try (GeoJSONReader geoJSONReader = new GeoJSONReader(new ClassPathResource(path).getFile().toURI().toURL())) {
-            SimpleFeatureCollection features = geoJSONReader.getFeatures();
-            log.info("Nombre de parcelles a importées " + features.size());
-            int i = 0;
-            List<Parcelle> parcellesTampon = new ArrayList<>(TAILLE_TAMPON);
-            try (SimpleFeatureIterator iterator = features.features()) {
-                while (iterator.hasNext()) {
-                    SimpleFeature feature = iterator.next();
-                    ParcelleDto parcelleDto =
-                            ParcelleDto.builder()
-                                    .id((String) feature.getAttribute("id"))
-                                    .commune((String) feature.getAttribute("commune"))
-                                    .prefixe((String) feature.getAttribute("prefixe"))
-                                    .section((String) feature.getAttribute("section"))
-                                    .numero((String) feature.getAttribute("numero"))
-                                    .contenance((Integer) feature.getAttribute("contenance"))
-                                    .arpente((Boolean) feature.getAttribute("arpente"))
-                                    .created((Date) feature.getAttribute("created"))
-                                    .updated((Date) feature.getAttribute("updated"))
-                                    .geom((Polygon) feature.getAttribute("geometry"))
-                                    .build();
-                    Parcelle parcelle = ParcelleMapper.MAPPER.toEntity(parcelleDto, communeRepository);
-                    parcellesTampon.add(parcelle);
-                    if (parcellesTampon.size() == TAILLE_TAMPON) {
-                        log.info("Tampon atteint, sauvegarde des parcelles");
-                        i = sauvegardeParcelleEtIncrementeI(i, parcellesTampon);
-                    }
-                }
-                log.info("Fin de la lecture des parcelles");
-                i = sauvegardeParcelleEtIncrementeI(i, parcellesTampon);
-                log.info("Fin de la sauvegarde des parcelles");
-            }
-            log.info("Nombre de parcelles sauvegardées : " + i);
-        } catch (IOException ioException) {
-            log.error("Problème lors de la lecture du fichier {}: {}", path, Arrays.toString(ioException.getStackTrace()));
-        }
-    }
+        try {
+            String pathDownloadedFile = FileUtils.downloadFile(path, supabaseBucketService, temporaryFileService);
 
-    private int sauvegardeParcelleEtIncrementeI(int i, List<Parcelle> parcellesTampon) {
-        log.info("Nombre de parcelles à sauvegarder : " + parcellesTampon.size());
-        List<Parcelle> parcelleSauvegarde = parcelleService.enregistrementLotParcelle(parcellesTampon);
-        int nombreParcellesSauvegardees = parcelleSauvegarde.size();
-        i += nombreParcellesSauvegardees;
-        if (nombreParcellesSauvegardees == parcellesTampon.size()) {
-            log.info("Nombre de parcelles sauvegardées : " + i);
-        } else {
-            log.error("Problème lors de la sauvegarde des parcelles : {} parcelles à sauvegarder et {} parcelles sauvegardées", parcellesTampon.size(), nombreParcellesSauvegardees);
+            try (GeoJSONReader geoJSONReader = new GeoJSONReader(new File(pathDownloadedFile).toURI().toURL())) {
+                try (Stream<SimpleFeature> featureStream = GeoJsonUtils.toStream(geoJSONReader.getIterator())) {
+                    featureStream
+                            .parallel()
+                            .map(GeoJsonUtils::transformSimpleFeatureToParcelleDto)
+                            .map(parcelleDto -> ParcelleMapper.MAPPER.toEntity(parcelleDto, communeRepository))
+                            .forEach(parcelleService::enregistrementParcelle);
+                }
+            }
+
+        } catch (IOException | ExecutionException | InterruptedException e) {
+            log.error("Problème lors de la lecture du fichier {}: {}", path, e.getMessage());
         }
-        parcellesTampon.clear();
-        return i;
     }
 
 }
