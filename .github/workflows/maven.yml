@@ -101,7 +101,7 @@ jobs:
     steps:
       - name: Copy Docker image to VPS
         run: |
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           scp -i ~/.ssh/id_rsa parcelle_${{ github.run_number }}.tar ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST}}:/home/${{ secrets.SSH_USER}}/docker-images/
 
