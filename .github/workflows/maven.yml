@@ -60,7 +60,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     needs:
-      - project-build
+      - test
 
     steps:
       - uses: actions/checkout@v3
