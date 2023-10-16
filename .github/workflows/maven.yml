@@ -134,15 +134,15 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          scp -i ~/.ssh/id_rsa parcelle_${{ github.run_number }}.tar ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST}}:/home/${{ secrets.SSH_USER}}/docker-images/
+          scp -i ~/.ssh/id_rsa -P ${{ secrets.SSH_PORT}} parcelle_${{ github.run_number }}.tar ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST}}:/home/${{ secrets.SSH_USER}}/docker-images/
 
       - name: SSH into VPS and load Docker image
         run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST}} "docker load -i /home/${{ secrets.SSH_USER}}/docker-images/parcelle_${{ github.run_number }}.tar"
+          ssh -i ~/.ssh/id_rsa -p ${{ secrets.SSH_PORT}} ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST}} "docker load -i /home/${{ secrets.SSH_USER}}/docker-images/parcelle_${{ github.run_number }}.tar"
 
       - name: SSH into VPS and restart Docker container
         run: |
-          ssh -i ~/.ssh/id_rsa ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST}} "docker stop parcelle || true && docker rm parcelle || true && docker run -d -p 8080:8080 --name parcelle cteillet/parcelle:${{ github.run_number }}"
+          ssh -i ~/.ssh/id_rsa -p ${{ secrets.SSH_PORT}} ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST}} "docker stop parcelle || true && docker rm parcelle || true && docker run -d -p 8080:8080 --name parcelle cteillet/parcelle:${{ github.run_number }}"
 
       - name: Cleanup
         run: |
