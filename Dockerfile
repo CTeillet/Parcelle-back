@@ -8,14 +8,10 @@ COPY . /project
 WORKDIR /project
 
 # Cache Maven local
-COPY .mvn .mvn
-COPY mvnw .
-COPY pom.xml .
-
-RUN ./mvnw dependency:go-offline
+COPY ~/.m2 /root/.m2
 
 # Build de l'application
-RUN ./mvnw clean package -DskipTests
+RUN mvn clean package -DskipTests
 
 # Deuxième étape (image finale)
 FROM eclipse-temurin:20-jdk-alpine
