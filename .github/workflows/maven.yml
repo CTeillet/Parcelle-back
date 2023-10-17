@@ -159,7 +159,7 @@ jobs:
           # Local file or directory
           localPath: parcelle_${{ github.run_number }}.tar
           # Remote file or directory path (file or directories will be created)
-          remotePath: ~/docker-images/
+          remotePath: /home/${{ secrets.SSH_USER}}/docker-images/
       - name: SSH into VPS and load Docker image
         run: |
           ssh -i ~/.ssh/id_rsa -p ${{ secrets.SSH_PORT}} ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST}} "docker load -i /home/${{ secrets.SSH_USER}}/docker-images/parcelle_${{ github.run_number }}.tar"
