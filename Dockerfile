@@ -8,7 +8,7 @@ COPY . /project
 WORKDIR /project
 
 # Cache Maven local
-COPY ~/.m2 /root/.m2
+COPY /home/runner/.m2 /root/.m2
 
 # Build de l'application
 RUN mvn clean package -DskipTests
