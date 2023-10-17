@@ -157,7 +157,7 @@ jobs:
           # Local file or directory
           localPath: parcelle_${{ github.run_number }}.tar
           # Remote file or directory path (file or directories will be created)
-          remotePath: /home/${{ secrets.SSH_USER}}/docker-images/
+          remotePath: docker-images/
       - name: SSH into VPS and load Docker image
         uses: cross-the-world/ssh-pipeline@v1.2.0
         with: 
