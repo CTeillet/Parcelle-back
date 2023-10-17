@@ -132,13 +132,23 @@ jobs:
       - docker-build
 
     steps:
-      - name: Copy Docker image to VPS
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          scp -i ~/.ssh/id_rsa -P ${{ secrets.SSH_PORT}} parcelle_${{ github.run_number }}.tar ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST}}:/home/${{ secrets.SSH_USER}}/docker-images/
-
+      - name: SFTP SSH Action
+        # You may pin to the exact commit or the version.
+        # uses: Creepios/sftp-action@0fd4721c91c1846a57e648dc22e7d797fce0fbf5
+        uses: Creepios/sftp-action@v1.0.5
+        with:
+          # Host to login
+          host: ${{ secrets.SSH_HOST}}
+          # Port to login
+          port: ${{ secrets.SSH_PORT}
+          # Username to login
+          username: ${{ secrets.SSH_USER}}
+           # Passwort to login
+          password: ${{ secrets.SSH_PASSWORD}}
+          # Local file or directory
+          localPath: parcelle_${{ github.run_number }}.tar
+          # Remote file or directory path (file or directories will be created)
+          remotePath: ~/docker-images/parcelle_${{ github.run_number }}.tar
       - name: SSH into VPS and load Docker image
         run: |
           ssh -i ~/.ssh/id_rsa -p ${{ secrets.SSH_PORT}} ${{ secrets.SSH_USER}}@${{ secrets.SSH_HOST}} "docker load -i /home/${{ secrets.SSH_USER}}/docker-images/parcelle_${{ github.run_number }}.tar"
