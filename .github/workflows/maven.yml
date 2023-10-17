@@ -116,7 +116,10 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-
+      - name: Affichage répertoire courant
+        run: |
+          cd ~/.m2
+          pwd
       - name: Build Docker image
         run: |
           docker build -t cteillet/parcelle:${{ github.run_number }} .
