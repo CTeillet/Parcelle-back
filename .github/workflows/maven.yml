@@ -124,6 +124,12 @@ jobs:
         run: |
           docker build -t cteillet/parcelle:${{ github.run_number }} .
           docker save -o parcelle_${{ github.run_number }}.tar cteillet/parcelle:${{ github.run_number }}
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: docker-image
+          path: parcelle_${{ github.run_number }}.tar
+
 
   deploy-to-vps:
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -132,6 +138,11 @@ jobs:
       - docker-build
 
     steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: docker-image
+          path: .
       - name: SFTP SSH Action
         # You may pin to the exact commit or the version.
         # uses: Creepios/sftp-action@0fd4721c91c1846a57e648dc22e7d797fce0fbf5
