@@ -140,7 +140,7 @@ jobs:
           # Host to login
           host: ${{ secrets.SSH_HOST}}
           # Port to login
-          port: ${{ secrets.SSH_PORT}
+          port: ${{ secrets.SSH_PORT}}
           # Username to login
           username: ${{ secrets.SSH_USER}}
            # Passwort to login
