@@ -1,4 +1,3 @@
-# Première étape de construction (build)
 FROM maven:3.9.3-eclipse-temurin-20-alpine AS build
 
 RUN mkdir /project
@@ -7,13 +6,8 @@ COPY . /project
 
 WORKDIR /project
 
-# Cache Maven local
-COPY /home/runner/.m2 /root/.m2
-
-# Build de l'application
 RUN mvn clean package -DskipTests
 
-# Deuxième étape (image finale)
 FROM eclipse-temurin:20-jdk-alpine
 
 RUN mkdir /app
