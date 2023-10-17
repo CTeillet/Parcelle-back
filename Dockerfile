@@ -1,25 +1,25 @@
-FROM maven:3.9.3-eclipse-temurin-20-alpine AS build
-
-RUN mkdir /project
-
-COPY . /project
+# Stage 1: Build Stage
+FROM maven:3.8.4-openjdk-17-slim AS build
 
 WORKDIR /project
 
-RUN mvn clean package -DskipTests
+COPY . .
 
-FROM eclipse-temurin:20-jdk-alpine
+RUN mvn clean package -DskipTests && \
+    rm -rf /root/.m2
 
-RUN mkdir /app
-
-RUN addgroup -g 1001 -S parcellegroup
-
-RUN adduser -S parcelle -u 1001
-
-COPY --from=build /project/target/*.jar /app/parcelle.jar
+# Stage 2: Run Stage
+FROM openjdk:20-jre-slim
 
 WORKDIR /app
 
+RUN addgroup -g 1001 -S parcellegroup && \
+    adduser -S parcelle -u 1001 -G parcellegroup
+
+COPY --from=build /project/target/*.jar .
+
 RUN chown -R parcelle:parcellegroup /app
 
-CMD java $JAVA_OPTS -jar parcelle.jar
+USER parcelle
+
+CMD ["java", "-jar", "*.jar"]

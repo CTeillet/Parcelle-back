@@ -5,13 +5,14 @@ import com.teillet.parcelle.dto.AdresseDto;
 import com.teillet.parcelle.mapper.AdresseMapper;
 import com.teillet.parcelle.repository.CommuneRepository;
 import com.teillet.parcelle.service.IAdresseService;
+import com.teillet.parcelle.service.ISupabaseBucketService;
+import com.teillet.parcelle.service.ITemporaryFileService;
 import com.teillet.parcelle.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -19,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 
 @Order(3)
@@ -28,6 +30,8 @@ import java.util.Objects;
 public class InitialisationAdresse implements CommandLineRunner {
     private final IAdresseService adresseService;
     private final CommuneRepository communeRepository;
+    private final ITemporaryFileService temporaryFileService;
+    private final ISupabaseBucketService supabaseBucketService;
 
     @Value("${fichier.adresse}")
     private String fichierAdresse;
@@ -36,8 +40,9 @@ public class InitialisationAdresse implements CommandLineRunner {
     private String codePostalCodeInsee;
 
     @Override
-    public void run(String... args) throws IOException {
+    public void run(String... args) throws IOException, ExecutionException, InterruptedException {
         if (adresseService.nombreAdresse() > 0) {
+            log.info("Il y a déjà des adresses enregistrées. L'import n'est pas nécessaire.");
             return;
         }
 
@@ -47,10 +52,11 @@ public class InitialisationAdresse implements CommandLineRunner {
         log.info("Fin import adresses");
     }
 
-    private void importAdresse(String cheminFichier, List<String> codePostauxValides) throws IOException {
+    private void importAdresse(String cheminFichier, List<String> codePostauxValides) throws IOException, ExecutionException, InterruptedException {
         ObjectMapper mapper = new ObjectMapper();
+        String pathDownloadedFile = FileUtils.downloadFile(cheminFichier, supabaseBucketService, temporaryFileService);
 
-        File file = new ClassPathResource(cheminFichier).getFile();
+        File file = new File(pathDownloadedFile);
         try (BufferedReader br = FileUtils.openGzFile(file)) {
             br.lines()
                     .parallel()
