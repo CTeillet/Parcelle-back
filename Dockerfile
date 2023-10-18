@@ -1,5 +1,5 @@
 # Stage 1: Build Stage
-FROM maven:3.8.4-openjdk-17-slim AS build
+FROM maven:3.8.7-eclipse-temurin-17-alpine AS build
 
 WORKDIR /project
 
@@ -9,17 +9,18 @@ RUN mvn clean package -DskipTests && \
     rm -rf /root/.m2
 
 # Stage 2: Run Stage
-FROM openjdk:20-jre-slim
+FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
 RUN addgroup -g 1001 -S parcellegroup && \
     adduser -S parcelle -u 1001 -G parcellegroup
 
-COPY --from=build /project/target/*.jar .
+COPY --from=build /project/target/*.jar parcelle.jar
 
-RUN chown -R parcelle:parcellegroup /app
+RUN chown parcelle:parcellegroup parcelle.jar && \
+    chmod 755 parcelle.jar
 
 USER parcelle
 
-CMD ["java", "-jar", "*.jar"]
+CMD ["java", "-Djasypt.encryptor.password=${JASYPT_PASSWORD}", "-jar", "parcelle.jar"]

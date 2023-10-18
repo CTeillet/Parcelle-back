@@ -14,15 +14,18 @@
     <name>Parcelle</name>
     <description>Parcelle</description>
     <properties>
-        <java.version>20</java.version>
+        <java.version>17</java.version>
         <geotools.version>30.0</geotools.version>
         <hibernate.version>6.3.1.Final</hibernate.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
-        <jts.version>1.19.0</jts.version>
     </properties>
 
     <!--    Add a repository -->
     <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
         <repository>
             <id>osgeo</id>
             <name>Open Source Geospatial Foundation Repository</name>
@@ -116,11 +119,6 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.locationtech.jts</groupId>
-            <artifactId>jts-core</artifactId>
-            <version>${jts.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${org.mapstruct.version}</version>
@@ -175,6 +173,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
                 <configuration>
 
                     <source>${java.version}</source>
