@@ -182,7 +182,7 @@ jobs:
           # ssh remote password
           pass: ${{ secrets.SSH_PASSWORD}}
           # execute commands on ssh
-          script: docker stop parcelle || true && docker rm parcelle || true && docker run -d -p 8080:8080 --name parcelle cteillet/parcelle:${{ github.run_number }} -e JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD}}
+          script: docker stop parcelle || true && docker rm parcelle || true && docker run -d -p 8080:8080 --name parcelle cteillet/parcelle:${{ github.run_number }} -e JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD}} -v /app/logs:/home/deploiement-parcelle/logs
 
       - name: Cleanup
         run: |
