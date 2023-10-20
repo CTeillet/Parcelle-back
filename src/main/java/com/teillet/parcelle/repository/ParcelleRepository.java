@@ -18,6 +18,14 @@ import java.util.stream.Collectors;
 @Repository
 public interface ParcelleRepository extends JpaRepository<Parcelle, String> {
 
+	@Query("""
+		SELECT p
+		FROM Parcelle p
+		LEFT JOIN FETCH p.commune
+		LEFT JOIN FETCH p.adresse
+		WHERE p.supprime = false
+
+	""")
 	List<Parcelle> findBySupprimeFalse();
 
 	@Transactional
@@ -38,7 +46,7 @@ public interface ParcelleRepository extends JpaRepository<Parcelle, String> {
 				FROM parcelle
 				WHERE supprime = false
 			) subquery
-			GROUP BY cluster_id
+			GROUP BY cluster_id, geom
 			"""
 	)
 	List<Object[]> getParcelleClustersQuery();
@@ -52,6 +60,7 @@ public interface ParcelleRepository extends JpaRepository<Parcelle, String> {
 
 	private static ParcelleClusterDto creationParcelleCluster(Object[] row) {
 		List<String> intersectingIds = Arrays.asList((String[]) row[0]);
+		//noinspection unchecked
 		Polygon jtsPolygon = JTS.to( (org.geolatte.geom.Polygon<org.geolatte.geom.Position>) row[1]);
 		return new ParcelleClusterDto(intersectingIds, jtsPolygon);
 	}

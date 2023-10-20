@@ -31,7 +31,7 @@ public class Parcelle {
 	@Column(name = "surface")
 	private Integer surface;
 
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = FetchType.EAGER)
 	@JoinColumn(name = "commune_insee_com", nullable = false)
 	private Commune commune;
 
@@ -44,7 +44,7 @@ public class Parcelle {
 	@Column(name = "supprime", nullable = false, columnDefinition = "boolean default false")
 	private Boolean supprime;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "adresse_id")
 	private Adresse adresse;
 
