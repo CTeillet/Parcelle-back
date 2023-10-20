@@ -38,3 +38,4 @@ build/
 !/src/main/resources/json/adresses-cadastre-91.ndjson
 /src/main/resources/json/adresses-cadastre-91.ndjson
 /data/
+/logs/

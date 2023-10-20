@@ -23,4 +23,4 @@ RUN chown parcelle:parcellegroup parcelle.jar && \
 
 USER parcelle
 
-CMD ["java", "-Djasypt.encryptor.password=${JASYPT_PASSWORD}", "-jar", "parcelle.jar"]
+CMD ["java", "-Djasypt.encryptor.password=${JASYPT_PASSWORD}", "-jar", "parcelle.jar", "--spring.profiles.active=vps"]
