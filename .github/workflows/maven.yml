@@ -143,7 +143,19 @@ jobs:
         with:
           name: docker-image
           path: .
-      - name: SFTP SSH Action
+      - name: Nettoyage du dossier docker-images
+        uses: cross-the-world/ssh-pipeline@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST}}
+          # ssh remote port
+          port: ${{ secrets.SSH_PORT}}
+          # ssh remote user
+          user: ${{ secrets.SSH_USER}}
+          # ssh remote password
+          pass: ${{ secrets.SSH_PASSWORD}}
+          # execute commands on ssh
+          script: rm -rf /home/${{ secrets.SSH_USER}}/docker-images/*
+      - name: Transfer docker images to VPS
         uses: Creepios/sftp-action@v1.0.5
         with:
           # Host to login
@@ -182,7 +194,8 @@ jobs:
           # ssh remote password
           pass: ${{ secrets.SSH_PASSWORD}}
           # execute commands on ssh
-          script: docker stop parcelle || true && docker rm parcelle || true && docker run -d -p 8080:8080 --name parcelle cteillet/parcelle:${{ github.run_number }} -e JASYPT_PASSWORD='${{ secrets.JASYPT_PASSWORD}}' -v /app/logs:/home/deploiement-parcelle/logs
+          script: docker stop parcelle || true && docker rm parcelle || true && docker run -d -p 8080:8080 --name parcelle -e JASYPT_PASSWORD='${{ secrets.JASYPT_PASSWORD}}' -v /app/logs:/home/deploiement-parcelle/logs cteillet/parcelle:${{ github.run_number }}
+
 
       - name: Cleanup
         run: |
