@@ -79,7 +79,7 @@ jobs:
 
       - name: Quality Check with Checkstyle
         run: mvn checkstyle:check
-      
+
       - name: Archive Checkstyle XML Report
         uses: actions/upload-artifact@v2
         with:
@@ -160,7 +160,7 @@ jobs:
           remotePath: docker-images/
       - name: SSH into VPS and load Docker image
         uses: cross-the-world/ssh-pipeline@v1.2.0
-        with: 
+        with:
           host: ${{ secrets.SSH_HOST}}
           # ssh remote port
           port: ${{ secrets.SSH_PORT}}
@@ -173,7 +173,7 @@ jobs:
 
       - name: SSH into VPS and restart Docker container
         uses: cross-the-world/ssh-pipeline@v1.2.0
-        with: 
+        with:
           host: ${{ secrets.SSH_HOST}}
           # ssh remote port
           port: ${{ secrets.SSH_PORT}}
@@ -182,7 +182,7 @@ jobs:
           # ssh remote password
           pass: ${{ secrets.SSH_PASSWORD}}
           # execute commands on ssh
-          script: docker stop parcelle || true && docker rm parcelle || true && docker run -d -p 8080:8080 --name parcelle cteillet/parcelle:${{ github.run_number }} -e JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD}} -v /app/logs:/home/deploiement-parcelle/logs
+          script: docker stop parcelle || true && docker rm parcelle || true && docker run -d -p 8080:8080 --name parcelle cteillet/parcelle:${{ github.run_number }} -e JASYPT_PASSWORD='${{ secrets.JASYPT_PASSWORD}}' -v /app/logs:/home/deploiement-parcelle/logs
 
       - name: Cleanup
         run: |
