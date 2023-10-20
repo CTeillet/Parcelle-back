@@ -21,6 +21,7 @@ public class LiaisonParcelleAdresse implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (adresseService.nombreAdresse() == 0 || parcelleService.nombreParcelleLieesAdresse() > 0) {
+            log.info("Il n'y a pas d'adresses ou il y a déjà des parcelles liées à une adresse. La liaison n'est pas nécessaire.");
             return;
         }
         log.info("Début liaison parcelle adresse");

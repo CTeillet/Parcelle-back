@@ -36,6 +36,7 @@ public class InitialisationCommune implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		if (communeService.nombreCommune() > 0) {
+			log.info("Il y a déjà des communes enregistrées. L'import n'est pas nécessaire.");
 			return;
 		}
 
