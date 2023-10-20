@@ -13,6 +13,11 @@ FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
+#Create a repertory for the logs
+RUN mkdir -p /app/logs && \
+    chown -R 1001:1001 /app/logs && \
+    chmod 755 /var/log/parcelle
+
 RUN addgroup -g 1001 -S parcellegroup && \
     adduser -S parcelle -u 1001 -G parcellegroup
 
