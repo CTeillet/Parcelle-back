@@ -54,7 +54,7 @@ public class InitialisationParcelle implements CommandLineRunner {
         try {
             String pathDownloadedFile = FileUtils.downloadFile(path, supabaseBucketService, temporaryFileService);
 
-            try (GeoJSONReader geoJSONReader = new GeoJSONReader(new File(pathDownloadedFile).toURI().toURL())) {
+            try (GeoJSONReader geoJSONReader = new GeoJSONReader(FileUtils.getInputStreamGzFile(new File(pathDownloadedFile)))) {
                 try (Stream<SimpleFeature> featureStream = GeoJsonUtils.toStream(geoJSONReader.getIterator())) {
                     featureStream
                             .parallel()

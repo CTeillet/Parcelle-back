@@ -5,6 +5,7 @@ import com.teillet.parcelle.service.ISupabaseBucketService;
 import com.teillet.parcelle.service.ITemporaryFileService;
 import io.supabase.data.file.FileDownload;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -21,15 +22,31 @@ public class FileUtils {
         throw new IllegalStateException("Utility class");
     }
 
-    // Create a method that open gz fil
+    /**
+     *  Create a method that open gz file and return a BufferedReader
+     *  @param file the file to open
+     *  @return a BufferedReader to read the file
+      */
+    @NotNull
     public static BufferedReader openGzFile(File file) throws IOException {
         try {
-            InputStream fileStream = new FileInputStream(file);
-            InputStream gzipStream = new GZIPInputStream(fileStream);
-            return new BufferedReader(new InputStreamReader(gzipStream, StandardCharsets.UTF_8));
+            InputStream gzipStream = getInputStreamGzFile(file);
+            InputStreamReader in = new InputStreamReader(gzipStream, StandardCharsets.UTF_8);
+            return new BufferedReader(in);
         } catch (IOException e) {
             throw new IOException("Erreur lors de l'ouverture du fichier " + file, e);
         }
+    }
+
+    /**
+     * Create a method that open gz file and return a InputStream
+     * @param file the file to open
+     * @return a InputStream to read the file
+     */
+    @NotNull
+    public static InputStream getInputStreamGzFile(File file) throws IOException {
+        InputStream fileStream = new FileInputStream(file);
+	    return new GZIPInputStream(fileStream);
     }
 
     //Lis tout le fichier et renvoie son contenu dans un String depuis un BufferedReader
