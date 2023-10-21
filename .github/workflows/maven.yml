@@ -121,7 +121,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: false
-          tags: parcelle:${{ github.run_number }}
+          tags: cteillet/parcelle:${{ github.run_number }}
           load: true
 
       - name: List docker images
@@ -134,7 +134,7 @@ jobs:
         env:
           DSLIM_HTTP_PROBE: false
         with:
-          target: parcelle:${{ github.run_number }}
+          target: cteillet/parcelle:${{ github.run_number }}
           tag: "parcelle-slim:${{ github.run_number }}"
 
       - name: Save Docker image
