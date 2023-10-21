@@ -122,24 +122,7 @@ jobs:
         with:
           push: false
           tags: cteillet/parcelle:${{ github.run_number }}
-          load: true
-
-      - name: List docker images
-        run: |
-          docker images
-
-      # Slim the Image
-      - name: Slim Docker image
-        uses: kitabisa/docker-slim-action@v1
-        env:
-          DSLIM_HTTP_PROBE: false
-        with:
-          target: cteillet/parcelle:${{ github.run_number }}
-          tag: "${{ github.run_number }}-slim"
-
-      - name: Save Docker image
-        run: |
-          docker save -o parcelle_${{ github.run_number }}.tar cteillet/parcelle:${{ github.run_number }}-slim
+          outputs: type=docker,dest=parcelle_${{ github.run_number }}.tar
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
@@ -213,7 +196,7 @@ jobs:
           # ssh remote password
           pass: ${{ secrets.SSH_PASSWORD}}
           # execute commands on ssh
-          script: docker stop parcelle || true && docker rm parcelle || true && docker run -d -p 8080:8080 --name parcelle -e JASYPT_PASSWORD='${{ secrets.JASYPT_PASSWORD}}' -v /app/logs:/home/deploiement-parcelle/logs cteillet/parcelle:${{ github.run_number }}-slim
+          script: docker stop parcelle || true && docker rm parcelle || true && docker run -d -p 8080:8080 --name parcelle -e JASYPT_PASSWORD='${{ secrets.JASYPT_PASSWORD}}' -v /app/logs:/home/deploiement-parcelle/logs cteillet/parcelle:${{ github.run_number }}
 
       - name: Cleanup
         run: |
