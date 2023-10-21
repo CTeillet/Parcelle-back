@@ -122,6 +122,7 @@ jobs:
         with:
           push: false
           tags: cteillet/parcelle:${{ github.run_number }}
+          load: true
 
       - name: List docker images
         run: |
