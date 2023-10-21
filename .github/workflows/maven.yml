@@ -139,7 +139,7 @@ jobs:
 
       - name: Save Docker image
         run: |
-          docker save -o parcelle_${{ github.run_number }}.tar parcelle-slim:${{ github.run_number }}
+          docker save -o parcelle_${{ github.run_number }}.tar cteillet/parcelle:${{ github.run_number }}-slim
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
