@@ -121,7 +121,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: false
-          tags: cteillet/parcelle:${{ github.run_number }}
+          tags: parcelle:${{ github.run_number }}
           load: true
 
       - name: List docker images
@@ -134,12 +134,12 @@ jobs:
         env:
           DSLIM_HTTP_PROBE: false
         with:
-          target: cteillet/parcelle:${{ github.run_number }}
-          tag: "cteillet/parcelle-slim:${{ github.run_number }}"
+          target: parcelle:${{ github.run_number }}
+          tag: "parcelle-slim:${{ github.run_number }}"
 
       - name: Save Docker image
         run: |
-          docker save -o parcelle_${{ github.run_number }}.tar cteillet/parcelle-slim:${{ github.run_number }}
+          docker save -o parcelle_${{ github.run_number }}.tar parcelle-slim:${{ github.run_number }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
