@@ -20,7 +20,6 @@ public class ParcelleController {
     private final IParcelleService parcelleService;
 
     @GetMapping("/parcelle")
-    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<String> getParcelle() throws IOException, ExecutionException, InterruptedException {
         log.info("Récupération des parcelles");
         CompletableFuture<List<Parcelle>> parcelles = parcelleService.recuperationParcellesNonSupprimees();
@@ -31,7 +30,6 @@ public class ParcelleController {
 
     //Delete a list of parcelles by id of String
     @DeleteMapping("/parcelle")
-    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<String> deleteParcelles(@RequestBody List<String> ids) {
         log.info("Suppression des parcelles " + ids);
         if (parcelleService.suppressionParcelles(ids)) {
@@ -43,7 +41,6 @@ public class ParcelleController {
 
     //Get one parcelle
     @GetMapping("/parcelle/{id}")
-    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<String> getParcelleById(@PathVariable String id) throws IOException, ExecutionException, InterruptedException {
         log.info("Récupération de la parcelle " + id);
         CompletableFuture<Parcelle> parcelle = parcelleService.recuperationParcelleParId(id);
