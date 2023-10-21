@@ -11,10 +11,6 @@ RUN mvn clean package -DskipTests && \
 # Stage 2: Run Stage
 FROM eclipse-temurin:17-jre-alpine
 
-RUN apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    rm -rf /tmp/*
-
 WORKDIR /app
 
 RUN addgroup -g 1001 -S parcellegroup && \
