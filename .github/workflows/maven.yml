@@ -126,13 +126,13 @@ jobs:
           push: false
           tags: cteillet/parcelle:${{ github.run_number }}
       # Slim the Image
-      - uses: kitabisa/docker-slim-action@v1
+      - name: Slim Docker image
+        uses: kitabisa/docker-slim-action@v1
         env:
           DSLIM_HTTP_PROBE: false
         with:
           target: cteillet/parcelle:${{ github.run_number }}
           tag: "cteillet/parcelle-slim:${{ github.run_number }}"
-
       - name: Save Docker image
         run: |
           docker save -o parcelle_${{ github.run_number }}.tar cteillet/parcelle-slim:${{ github.run_number }}
