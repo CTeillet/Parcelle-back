@@ -121,15 +121,26 @@ jobs:
           cd ~/.m2
           pwd
       - name: Build Docker image
+        uses: docker/build-push-action@v4
+        with:
+          push: false
+          tags: cteillet/parcelle:${{ github.run_number }}
+      # Slim the Image
+      - uses: kitabisa/docker-slim-action@v1
+        env:
+          DSLIM_HTTP_PROBE: false
+        with:
+          target: cteillet/parcelle:${{ github.run_number }}
+          tag: "cteillet/parcelle-slim:${{ github.run_number }}"
+
+      - name: Save Docker image
         run: |
-          docker build -t cteillet/parcelle:${{ github.run_number }} .
-          docker save -o parcelle_${{ github.run_number }}.tar cteillet/parcelle:${{ github.run_number }}
+          docker save -o parcelle_${{ github.run_number }}.tar cteillet/parcelle-slim:${{ github.run_number }}
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: docker-image
           path: parcelle_${{ github.run_number }}.tar
-
 
   deploy-to-vps:
     if: ${{ github.ref == 'refs/heads/main' }}
