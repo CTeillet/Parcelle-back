@@ -11,6 +11,10 @@ RUN mvn clean package -DskipTests && \
 # Stage 2: Run Stage
 FROM eclipse-temurin:17-jre-alpine
 
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /tmp/*
+
 WORKDIR /app
 
 RUN addgroup -g 1001 -S parcellegroup && \
@@ -22,5 +26,7 @@ RUN chown parcelle:parcellegroup parcelle.jar && \
     chmod 755 parcelle.jar
 
 USER parcelle
+
+EXPOSE 8080
 
 CMD ["java", "-Djasypt.encryptor.password=${JASYPT_PASSWORD}", "-jar", "parcelle.jar", "--spring.profiles.active=vps"]
