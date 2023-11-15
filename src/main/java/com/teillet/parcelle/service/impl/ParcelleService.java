@@ -60,4 +60,10 @@ public class ParcelleService implements IParcelleService {
     public Long nombreParcelleLieesAdresse() {
         return parcelleRepository.countByAdresseIsNotNull();
     }
+
+    @Override
+    public CompletableFuture<List<Parcelle>> recuperationParcellesParDestinationPrincipaleEtSupprime(String destinationPrincipale, boolean supprimer) {
+        log.info("Récupération des parcelles avec destinationPrincipale = {} et supprimer = {}", destinationPrincipale, supprimer);
+        return CompletableFuture.completedFuture(parcelleRepository.findByAdresse_DestinationPrincipaleAndSupprime(destinationPrincipale, supprimer));
+    }
 }

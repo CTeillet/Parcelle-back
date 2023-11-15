@@ -16,10 +16,11 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @AllArgsConstructor
 @Slf4j
+@RequestMapping("/parcelle")
 public class ParcelleController {
     private final IParcelleService parcelleService;
 
-    @GetMapping("/parcelle")
+    @GetMapping
     public ResponseEntity<String> getParcelle() throws IOException, ExecutionException, InterruptedException {
         log.info("Récupération des parcelles");
         CompletableFuture<List<Parcelle>> parcelles = parcelleService.recuperationParcellesNonSupprimees();
@@ -29,7 +30,7 @@ public class ParcelleController {
     }
 
     //Delete a list of parcelles by id of String
-    @DeleteMapping("/parcelle")
+    @DeleteMapping
     public ResponseEntity<String> deleteParcelles(@RequestBody List<String> ids) {
         log.info("Suppression des parcelles " + ids);
         if (parcelleService.suppressionParcelles(ids)) {
@@ -40,11 +41,20 @@ public class ParcelleController {
     }
 
     //Get one parcelle
-    @GetMapping("/parcelle/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<String> getParcelleById(@PathVariable String id) throws IOException, ExecutionException, InterruptedException {
         log.info("Récupération de la parcelle " + id);
         CompletableFuture<Parcelle> parcelle = parcelleService.recuperationParcelleParId(id);
         String string = ParcelleUtils.parcelleToGeoJson(parcelle.get());
+        return ResponseEntity.ok(string);
+    }
+
+    // Récupération des parcelles qui ont comme adresse la valeur destinationPrincipale en param et la valeur donnée pour supprimer
+    @GetMapping("/{destinationPrincipale}/{supprimer}")
+    public ResponseEntity<String> getParcelleByDestinationPrincipaleAndSupprime(@PathVariable String destinationPrincipale, @PathVariable boolean supprimer) throws IOException, ExecutionException, InterruptedException {
+        log.info("Récupération des parcelles avec destinationPrincipale = " + destinationPrincipale + " et supprimer = " + supprimer);
+        CompletableFuture<List<Parcelle>> parcelles = parcelleService.recuperationParcellesParDestinationPrincipaleEtSupprime(destinationPrincipale, supprimer);
+        String string = ParcelleUtils.parcellesToGeoJson(parcelles.get());
         return ResponseEntity.ok(string);
     }
 

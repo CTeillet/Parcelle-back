@@ -6,6 +6,8 @@ import com.teillet.parcelle.service.IAdresseService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class AdresseService implements IAdresseService {
@@ -25,6 +27,11 @@ public class AdresseService implements IAdresseService {
 	@Override
 	public Adresse recuperationAdresseCorrespondantParcelle(String id) {
 		return adresseRepository.findByCodesParcellesContains(id);
+	}
+
+	@Override
+	public List<String> recuperationValeursDestinationPrincipale() {
+		return adresseRepository.findDistinctDestinationPrincipale();
 	}
 
 }

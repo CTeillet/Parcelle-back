@@ -7,6 +7,7 @@ import org.locationtech.jts.geom.Polygon;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Repository
 public interface ParcelleRepository extends JpaRepository<Parcelle, String> {
+	List<Parcelle> findByAdresse_DestinationPrincipaleAndSupprime(@NonNull String destinationPrincipale, @NonNull Boolean supprime);
 
 	@Query("""
 		SELECT p

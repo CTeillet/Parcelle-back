@@ -25,4 +25,5 @@ public interface IParcelleService {
 
     Long nombreParcelleLieesAdresse();
 
+    CompletableFuture<List<Parcelle>> recuperationParcellesParDestinationPrincipaleEtSupprime(String destinationPrincipale, boolean supprimer);
 }
