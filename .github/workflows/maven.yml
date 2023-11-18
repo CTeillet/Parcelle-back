@@ -202,3 +202,7 @@ jobs:
         run: |
           rm -f parcelle_${{ github.run_number }}.tar
           # Ajoutez d'autres commandes de nettoyage au besoin
+      - name: Delete Artifact
+        uses: GeekyEggo/delete-artifact@v2.0.0
+        with:
+          name: docker-image
