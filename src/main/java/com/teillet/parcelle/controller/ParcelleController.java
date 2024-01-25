@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @AllArgsConstructor
 @Slf4j
-@RequestMapping("/parcelle")
+@RequestMapping("/api/private/parcelle")
 public class ParcelleController {
     private final IParcelleService parcelleService;
 
