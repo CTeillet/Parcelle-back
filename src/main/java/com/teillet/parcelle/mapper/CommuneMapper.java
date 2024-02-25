@@ -12,7 +12,7 @@ import java.util.List;
 public interface CommuneMapper {
 	CommuneMapper MAPPER = Mappers.getMapper(CommuneMapper.class);
 
-	@Mapping(target = "parcelles", ignore = true)
+	@Mapping(target = "plots", ignore = true)
 	Commune toEntity(CommuneDto communeDto);
 
 	List<Commune> toEntity(List<CommuneDto> communeDtos);

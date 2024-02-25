@@ -1,7 +1,7 @@
 package com.teillet.parcelle.repository;
 
 import com.teillet.parcelle.dto.ParcelleClusterDto;
-import com.teillet.parcelle.model.Parcelle;
+import com.teillet.parcelle.model.Plot;
 import org.geolatte.geom.jts.JTS;
 import org.locationtech.jts.geom.Polygon;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,25 +17,25 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
-public interface ParcelleRepository extends JpaRepository<Parcelle, String> {
-	List<Parcelle> findByAdresse_DestinationPrincipaleAndSupprime(@NonNull String destinationPrincipale, @NonNull Boolean supprime);
+public interface ParcelleRepository extends JpaRepository<Plot, String> {
+	List<Plot> findByAdresse_DestinationPrincipaleAndSupprime(@NonNull String destinationPrincipale, @NonNull Boolean supprime);
 
 	@Query("""
 		SELECT p
-		FROM Parcelle p
+		FROM Plot p
 		LEFT JOIN FETCH p.commune
 		LEFT JOIN FETCH p.adresse
 		WHERE p.supprime = false
 
 	""")
-	List<Parcelle> findBySupprimeFalse();
+	List<Plot> findBySupprimeFalse();
 
 	@Transactional
 	@Modifying
-	@Query("update Parcelle p set p.supprime = true where p.id in ?1")
+	@Query("update Plot p set p.supprime = true where p.id in ?1")
 	int updateSupprimeByIdIn(Collection<String> ids);
 
-	List<Parcelle> findByAdresseIsNull();
+	List<Plot> findByAdresseIsNull();
 
 	Long countByAdresseIsNotNull();
 

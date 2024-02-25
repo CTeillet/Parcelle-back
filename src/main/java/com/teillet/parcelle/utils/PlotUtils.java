@@ -1,7 +1,7 @@
 package com.teillet.parcelle.utils;
 
-import com.teillet.parcelle.model.Adresse;
-import com.teillet.parcelle.model.Parcelle;
+import com.teillet.parcelle.model.Address;
+import com.teillet.parcelle.model.Plot;
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.simple.SimpleFeatureType;
 import org.geotools.data.collection.ListFeatureCollection;
@@ -13,38 +13,38 @@ import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.util.List;
 
-public class ParcelleUtils {
+public class PlotUtils {
 
-    private ParcelleUtils() {
+    private PlotUtils() {
         throw new IllegalStateException("Utility class");
     }
 
-    public static String parcellesToGeoJson(List<Parcelle> parcelles) throws IOException {
+    public static String parcellesToGeoJson(List<Plot> plots) throws IOException {
         // Créer la structure du schéma des entités GeoJSON
         SimpleFeatureType featureType = createFeatureType();
 
         // Créer une collection des entités GeoJSON
-        SimpleFeatureCollection featureCollection = createFeatureCollection(parcelles, featureType);
+        SimpleFeatureCollection featureCollection = createFeatureCollection(plots, featureType);
 
         // Convertir la collection des entités en GeoJSON
         return GeoJsonUtils.convertToGeoJSON(featureCollection);
     }
 
-    private static SimpleFeatureCollection createFeatureCollection(List<Parcelle> parcelles, SimpleFeatureType featureType) {
+    private static SimpleFeatureCollection createFeatureCollection(List<Plot> plots, SimpleFeatureType featureType) {
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureType);
 
-        return parcelles
+        return plots
                 .stream()
-                .map(parcelle -> createSimpleFeature(featureBuilder, parcelle))
+                .map(plot -> createSimpleFeature(featureBuilder, plot))
                 .collect(() -> new ListFeatureCollection(featureType), ListFeatureCollection::add, ListFeatureCollection::addAll);
     }
 
-    private static SimpleFeature createSimpleFeature(SimpleFeatureBuilder featureBuilder, Parcelle parcelle) {
-        featureBuilder.add(parcelle.getId());
-        featureBuilder.add(parcelle.getSurface());
-        featureBuilder.add(parcelle.getCommune().getNomCom());
-        featureBuilder.add(parcelle.getGeom());
-        featureBuilder.add(parcelle.getAdresse());
+    private static SimpleFeature createSimpleFeature(SimpleFeatureBuilder featureBuilder, Plot plot) {
+        featureBuilder.add(plot.getId());
+        featureBuilder.add(plot.getSurface());
+        featureBuilder.add(plot.getCommune().getNomCom());
+        featureBuilder.add(plot.getGeom());
+        featureBuilder.add(plot.getAdresse());
 
         return featureBuilder.buildFeature(null);
     }
@@ -53,14 +53,14 @@ public class ParcelleUtils {
         SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
         builder.setName("Parcelle");
         builder.add("id", String.class);
-        builder.add("surface", Integer.class);
-        builder.add("commune", String.class);
+        builder.add("area", Integer.class);
+        builder.add("town", String.class);
         builder.add("geometry", Geometry.class);
-        builder.add("adresse", Adresse.class);
+        builder.add("address", Address.class);
         return builder.buildFeatureType();
     }
 
-    public static String parcelleToGeoJson(Parcelle p) throws IOException {
+    public static String parcelleToGeoJson(Plot p) throws IOException {
         return parcellesToGeoJson(List.of(p));
     }
 

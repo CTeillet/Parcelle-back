@@ -21,7 +21,7 @@ public class Territoire {
 
 	@OneToMany(mappedBy = "territoire", orphanRemoval = true)
 	@ToString.Exclude
-	private List<Pate> pates;
+	private List<Block> blocks;
 
 	@Override
 	public boolean equals(Object o) {

@@ -14,7 +14,7 @@ import java.util.Objects;
 @NoArgsConstructor(force = true)
 @Entity
 @Table(name = "adresse")
-public class Adresse {
+public class Address {
 	@Id
 	private String id;
 	private String codeVoie;
@@ -41,7 +41,7 @@ public class Adresse {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-		Adresse adresse = (Adresse) o;
+		Address adresse = (Address) o;
 		return getId() != null && Objects.equals(getId(), adresse.getId());
 	}
 

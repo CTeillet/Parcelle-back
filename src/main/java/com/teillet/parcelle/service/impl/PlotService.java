@@ -1,8 +1,8 @@
 package com.teillet.parcelle.service.impl;
 
-import com.teillet.parcelle.model.Parcelle;
+import com.teillet.parcelle.model.Plot;
 import com.teillet.parcelle.repository.ParcelleRepository;
-import com.teillet.parcelle.service.IParcelleService;
+import com.teillet.parcelle.service.IPlotService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -13,21 +13,16 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class ParcelleService implements IParcelleService {
+public class PlotService implements IPlotService {
     private final ParcelleRepository parcelleRepository;
 
     @Override
-    public Long nombreParcelle() {
+    public Long plotNumber() {
         return parcelleRepository.count();
     }
 
-    @Override
-    public List<Parcelle> enregistrementLotParcelle(List<Parcelle> parcelles) {
-        return parcelleRepository.saveAll(parcelles);
-    }
-
-    @Override
-    public boolean suppressionParcelles(List<String> ids) {
+	@Override
+    public boolean deletePlots(List<String> ids) {
         log.info("Nombre de parcelles à supprimer : " + ids.size());
         int nbParcellesSupprimees = parcelleRepository.updateSupprimeByIdIn(ids);
         log.info("Nombre de parcelles supprimées : " + nbParcellesSupprimees);
@@ -35,25 +30,25 @@ public class ParcelleService implements IParcelleService {
     }
 
     @Override
-    public CompletableFuture<List<Parcelle>> recuperationParcellesNonSupprimees() {
+    public CompletableFuture<List<Plot>> getNonDeletedPlots() {
         return CompletableFuture.completedFuture(parcelleRepository.findBySupprimeFalse());
     }
 
     @Override
-    public CompletableFuture<Parcelle> recuperationParcelleParId(String id) {
+    public CompletableFuture<Plot> getPlotById(String id) {
         return CompletableFuture.completedFuture(parcelleRepository.findById(id).orElse(null));
     }
 
     @Override
-    public List<Parcelle> recuperationParcellesNonLieesAdresse() {
+    public List<Plot> recuperationParcellesNonLieesAdresse() {
         return parcelleRepository.findByAdresseIsNull();
     }
 
     @Override
-    public void enregistrementParcelle(Parcelle parcelle) {
-        log.info("Enregistrement de la parcelle " + parcelle.getId());
-        parcelleRepository.save(parcelle);
-        log.info("Fin enregistrement de la parcelle " + parcelle.getId());
+    public void savePlot(Plot plot) {
+        log.info("Enregistrement de la parcelle " + plot.getId());
+        parcelleRepository.save(plot);
+        log.info("Fin enregistrement de la parcelle " + plot.getId());
     }
 
     @Override
@@ -62,7 +57,7 @@ public class ParcelleService implements IParcelleService {
     }
 
     @Override
-    public CompletableFuture<List<Parcelle>> recuperationParcellesParDestinationPrincipaleEtSupprime(String destinationPrincipale, boolean supprimer) {
+    public CompletableFuture<List<Plot>> recuperationParcellesParDestinationPrincipaleEtSupprime(String destinationPrincipale, boolean supprimer) {
         log.info("Récupération des parcelles avec destinationPrincipale = {} et supprimer = {}", destinationPrincipale, supprimer);
         return CompletableFuture.completedFuture(parcelleRepository.findByAdresse_DestinationPrincipaleAndSupprime(destinationPrincipale, supprimer));
     }

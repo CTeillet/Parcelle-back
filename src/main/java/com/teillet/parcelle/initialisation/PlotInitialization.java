@@ -1,8 +1,8 @@
 package com.teillet.parcelle.initialisation;
 
 import com.teillet.parcelle.mapper.ParcelleMapper;
-import com.teillet.parcelle.repository.CommuneRepository;
-import com.teillet.parcelle.service.IParcelleService;
+import com.teillet.parcelle.repository.TownRepository;
+import com.teillet.parcelle.service.IPlotService;
 import com.teillet.parcelle.service.ISupabaseBucketService;
 import com.teillet.parcelle.service.ITemporaryFileService;
 import com.teillet.parcelle.utils.FileUtils;
@@ -26,26 +26,28 @@ import java.util.stream.Stream;
 @Order(2)
 @RequiredArgsConstructor
 @Slf4j
-public class InitialisationParcelle implements CommandLineRunner {
+public class PlotInitialization implements CommandLineRunner {
 
-    private final IParcelleService parcelleService;
-    private final CommuneRepository communeRepository;
+    private final IPlotService plotService;
+    private final TownRepository townRepository;
     private final ITemporaryFileService temporaryFileService;
     private final ISupabaseBucketService supabaseBucketService;
 
-    @Value("${fichier.parcelles}")
-    private String fichierParcelles;
+    @Value("${file.plots}")
+    private String plotFiles;
+    @Value("${file.delimiter}")
+    private String delimiter;
 
     @Override
     public void run(String... args) {
-        if (parcelleService.nombreParcelle() > 0) {
+        if (plotService.plotNumber() > 0) {
             log.info("Il y a déjà des parcelles enregistrées. L'import n'est pas nécessaire.");
             return;
         }
 
         log.info("Début de l'import des parcelles");
-        List<String> fichiers = List.of(fichierParcelles.split(";"));
-        fichiers.forEach(this::lectureEtSauvegardeParcelles);
+        List<String> files = List.of(plotFiles.split(delimiter));
+        files.forEach(this::lectureEtSauvegardeParcelles);
         log.info("Fin de l'import des parcelles");
     }
 
@@ -59,8 +61,8 @@ public class InitialisationParcelle implements CommandLineRunner {
                     featureStream
                             .parallel()
                             .map(GeoJsonUtils::transformSimpleFeatureToParcelleDto)
-                            .map(parcelleDto -> ParcelleMapper.MAPPER.toEntity(parcelleDto, communeRepository))
-                            .forEach(parcelleService::enregistrementParcelle);
+                            .map(parcelleDto -> ParcelleMapper.MAPPER.toEntity(parcelleDto, townRepository))
+                            .forEach(plotService::savePlot);
                 }
             }
 

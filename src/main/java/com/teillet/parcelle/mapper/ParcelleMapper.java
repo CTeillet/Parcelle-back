@@ -2,8 +2,8 @@ package com.teillet.parcelle.mapper;
 
 import com.teillet.parcelle.dto.ParcelleDto;
 import com.teillet.parcelle.model.Commune;
-import com.teillet.parcelle.model.Parcelle;
-import com.teillet.parcelle.repository.CommuneRepository;
+import com.teillet.parcelle.model.Plot;
+import com.teillet.parcelle.repository.TownRepository;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,12 +16,12 @@ public interface ParcelleMapper {
 
     @Mapping(target = "adresse", ignore = true)
     @Mapping(target = "supprime", constant = "false")
-    @Mapping(target = "pate", ignore = true)
+    @Mapping(target = "block", ignore = true)
     @Mapping(target = "surface", source = "contenance")
-    Parcelle toEntity(ParcelleDto parcelleDto, @Context CommuneRepository communeRepository);
+    Plot toEntity(ParcelleDto parcelleDto, @Context TownRepository townRepository);
 
-    default Commune toCommune(String inseeCom, @Context CommuneRepository communeRepository) {
-        return communeRepository.findById(inseeCom).orElse(null);
+    default Commune toCommune(String inseeCom, @Context TownRepository townRepository) {
+        return townRepository.findById(inseeCom).orElse(null);
     }
 
 }

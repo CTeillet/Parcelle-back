@@ -13,7 +13,8 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class Pate {
+@Table(name = "pate")
+public class Block {
 	@Id
 	@Generated
 	private Long id;
@@ -22,16 +23,16 @@ public class Pate {
 	@JoinColumn(name = "territoire_id")
 	private Territoire territoire;
 
-	@OneToMany(mappedBy = "pate", orphanRemoval = true)
+	@OneToMany(mappedBy = "block", orphanRemoval = true)
 	@ToString.Exclude
-	private List<Parcelle> parcelles = new ArrayList<>();
+	private List<Plot> plots = new ArrayList<>();
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-		Pate pate = (Pate) o;
-		return getId() != null && Objects.equals(getId(), pate.getId());
+		Block block = (Block) o;
+		return getId() != null && Objects.equals(getId(), block.getId());
 	}
 
 	@Override

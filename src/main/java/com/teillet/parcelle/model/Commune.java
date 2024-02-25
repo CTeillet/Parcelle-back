@@ -29,7 +29,7 @@ public class Commune {
 
 	@OneToMany(mappedBy = "commune")
 	@ToString.Exclude
-	List<Parcelle> parcelles;
+	List<Plot> plots;
 
 	@Override
 	public boolean equals(Object o) {

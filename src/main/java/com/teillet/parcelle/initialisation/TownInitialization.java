@@ -4,7 +4,7 @@ package com.teillet.parcelle.initialisation;
 import com.teillet.parcelle.dto.CommuneDto;
 import com.teillet.parcelle.mapper.CommuneMapper;
 import com.teillet.parcelle.model.Commune;
-import com.teillet.parcelle.service.ICommuneService;
+import com.teillet.parcelle.service.ITownService;
 import com.teillet.parcelle.service.ISupabaseBucketService;
 import com.teillet.parcelle.service.ITemporaryFileService;
 import com.teillet.parcelle.utils.FileUtils;
@@ -23,19 +23,19 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class InitialisationCommune implements CommandLineRunner {
-	private final ICommuneService communeService;
+public class TownInitialization implements CommandLineRunner {
+	private final ITownService townService;
 	private final ITemporaryFileService temporaryFileService;
 	private final ISupabaseBucketService supabaseBucketService;
 
-	@Value("${fichier.code-postal}")
+	@Value("${file.zip-code}")
 	private String fichierCodePostal;
-	@Value("${departement.nom}")
+	@Value("${department.name}")
 	private String departement;
 
 	@Override
 	public void run(String... args) throws Exception {
-		if (communeService.nombreCommune() > 0) {
+		if (townService.townNumber() > 0) {
 			log.info("Il y a déjà des communes enregistrées. L'import n'est pas nécessaire.");
 			return;
 		}
@@ -48,11 +48,11 @@ public class InitialisationCommune implements CommandLineRunner {
 		//Filter les communeDtos pour ne garder que celles qui concernent le département choisi
 		List<CommuneDto> communeDtosFiltre = communeDtos.parallelStream().filter(communeDto -> communeDto.getNomDept().equals(departement)).toList();
 		//Conversion des communeDtos en communes
-		List<Commune> communes = CommuneMapper.MAPPER.toEntity(communeDtosFiltre);
-		log.info("Nombre de communes : " + communes.size());
+		List<Commune> towns = CommuneMapper.MAPPER.toEntity(communeDtosFiltre);
+		log.info("Nombre de communes : " + towns.size());
 		//Enregistrement des communes
-		List<Commune> communesSauvegardes = communeService.enregistrementLotCommune(communes);
-		log.info("Nombre de communes sauvegardées : " + communesSauvegardes.size());
+		List<Commune> savedTowns = townService.saveTowns(towns);
+		log.info("Nombre de communes sauvegardées : " + savedTowns.size());
 	}
 
 }

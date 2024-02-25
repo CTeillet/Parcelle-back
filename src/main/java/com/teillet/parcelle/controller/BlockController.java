@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @Slf4j
-public class PateController {
+public class BlockController {
     private final PateService pateService;
 
     @GetMapping("/generatePateTemporaires")

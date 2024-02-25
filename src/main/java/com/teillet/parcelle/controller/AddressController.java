@@ -1,6 +1,6 @@
 package com.teillet.parcelle.controller;
 
-import com.teillet.parcelle.service.IAdresseService;
+import com.teillet.parcelle.service.IAddressService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -14,13 +14,13 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 @RequestMapping("/adresse")
-public class AdresseController {
-	private final IAdresseService adresseService;
+public class AddressController {
+	private final IAddressService addressService;
 
 	@GetMapping("/type")
 	public ResponseEntity<List<String>> recuperationTypeAdresse() {
 		log.info("Récupération des types d'adresse");
-		List<String> typeParcelles = adresseService.recuperationValeursDestinationPrincipale();
+		List<String> typeParcelles = addressService.getAddressTypes();
 		return ResponseEntity.ok(typeParcelles);
 	}
 
