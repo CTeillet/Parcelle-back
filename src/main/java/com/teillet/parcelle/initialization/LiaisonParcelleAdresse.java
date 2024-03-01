@@ -1,4 +1,4 @@
-package com.teillet.parcelle.initialisation;
+package com.teillet.parcelle.initialization;
 
 import com.teillet.parcelle.model.Address;
 import com.teillet.parcelle.model.Plot;

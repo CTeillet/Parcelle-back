@@ -7,7 +7,7 @@ import org.springframework.lang.NonNull;
 
 import java.util.List;
 
-public interface AdresseRepository extends JpaRepository<Address, String> {
+public interface AddressRepository extends JpaRepository<Address, String> {
 	//Recuperer l'adresse correspondant à une parcelle en triant par ordre croissant d'adresse_id et en gardant le plus petit
 	@Query(value = "SELECT * FROM adresse WHERE id IN (SELECT adresse_id FROM adresse_code_parcelle WHERE code_parcelle = ?1) ORDER BY id LIMIT 1", nativeQuery = true)
 	Address findByCodesParcellesContains(@NonNull String codesParcelles);

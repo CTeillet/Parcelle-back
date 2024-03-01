@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 @AllArgsConstructor
 @Slf4j
 @RequestMapping("/api/private/parcelle")
-public class ParcelleController {
+public class PlotController {
     private final IPlotService parcelleService;
 
     @GetMapping

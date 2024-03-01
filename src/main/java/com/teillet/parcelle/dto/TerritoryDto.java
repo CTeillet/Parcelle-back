@@ -1,16 +1,17 @@
 package com.teillet.parcelle.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.locationtech.jts.geom.Geometry;
 
 import java.util.List;
 
 @Data
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
-public class ParcelleClusterDto {
-	private List<String> intersectingIds;
-	private Geometry geometry;
+@NoArgsConstructor(force = true)
+public class TerritoryDto {
+	private final Long id;
+	private final List<BlockDto> blocks;
 }

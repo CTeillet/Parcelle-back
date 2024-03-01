@@ -10,9 +10,9 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
-public interface AdresseMapper {
+public interface AddressMapper {
 
-	AdresseMapper MAPPER = Mappers.getMapper(AdresseMapper.class);
+	AddressMapper MAPPER = Mappers.getMapper(AddressMapper.class);
 
 	@Mapping(target = "commune", source = "codeCommune")
 	Address toEntity(AdresseDto adresseDto, @Context TownRepository townRepository);

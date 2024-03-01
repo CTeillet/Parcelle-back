@@ -1,6 +1,6 @@
 package com.teillet.parcelle.utils;
 
-import com.teillet.parcelle.dto.ParcelleClusterDto;
+import com.teillet.parcelle.dto.PlotClusterDto;
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.simple.SimpleFeatureType;
 import org.geotools.data.collection.ListFeatureCollection;
@@ -12,16 +12,16 @@ import org.locationtech.jts.geom.Geometry;
 import java.io.IOException;
 import java.util.List;
 
-public class ParcelleClusterUtils {
+public class PlotClusterUtils {
 
-    private ParcelleClusterUtils() {
+    private PlotClusterUtils() {
         throw new IllegalStateException("Utility class");
     }
 
-    public static String parcellesClusterToGeoJson(List<ParcelleClusterDto> parcelleClusterDtos) throws IOException {
+    public static String plotsClusterToGeoJson(List<PlotClusterDto> plotClusterDtos) throws IOException {
         SimpleFeatureType featureType = createFeatureType();
 
-        SimpleFeatureCollection featureCollection = createFeatureCollection(parcelleClusterDtos, featureType);
+        SimpleFeatureCollection featureCollection = createFeatureCollection(plotClusterDtos, featureType);
 
         return GeoJsonUtils.convertToGeoJSON(featureCollection);
     }
@@ -34,18 +34,18 @@ public class ParcelleClusterUtils {
         return builder.buildFeatureType();
     }
 
-    private static SimpleFeatureCollection createFeatureCollection(List<ParcelleClusterDto> parcelleClusterDtos, SimpleFeatureType featureType) {
+    private static SimpleFeatureCollection createFeatureCollection(List<PlotClusterDto> plotClusterDtos, SimpleFeatureType featureType) {
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureType);
 
-        return parcelleClusterDtos
+        return plotClusterDtos
                 .stream()
                 .map(parcelleClusterDto -> createSimpleFeature(featureBuilder, parcelleClusterDto))
                 .collect(() -> new ListFeatureCollection(featureType), ListFeatureCollection::add, ListFeatureCollection::addAll);
     }
 
-    private static SimpleFeature createSimpleFeature(SimpleFeatureBuilder featureBuilder, ParcelleClusterDto parcelleClusterDtos) {
-        featureBuilder.add(parcelleClusterDtos.getIntersectingIds());
-        featureBuilder.add(parcelleClusterDtos.getGeometry());
+    private static SimpleFeature createSimpleFeature(SimpleFeatureBuilder featureBuilder, PlotClusterDto plotClusterDtos) {
+        featureBuilder.add(plotClusterDtos.getIntersectingIds());
+        featureBuilder.add(plotClusterDtos.getGeometry());
 
         return featureBuilder.buildFeature(null);
     }

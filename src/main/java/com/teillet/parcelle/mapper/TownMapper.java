@@ -9,11 +9,13 @@ import org.mapstruct.factory.Mappers;
 import java.util.List;
 
 @Mapper
-public interface CommuneMapper {
-	CommuneMapper MAPPER = Mappers.getMapper(CommuneMapper.class);
+public interface TownMapper {
+	TownMapper MAPPER = Mappers.getMapper(TownMapper.class);
 
 	@Mapping(target = "plots", ignore = true)
 	Commune toEntity(CommuneDto communeDto);
 
 	List<Commune> toEntity(List<CommuneDto> communeDtos);
+
+	CommuneDto toDto(Commune commune);
 }

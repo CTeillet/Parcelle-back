@@ -1,6 +1,6 @@
-package com.teillet.parcelle.initialisation;
+package com.teillet.parcelle.initialization;
 
-import com.teillet.parcelle.mapper.ParcelleMapper;
+import com.teillet.parcelle.mapper.PlotMapper;
 import com.teillet.parcelle.repository.TownRepository;
 import com.teillet.parcelle.service.IPlotService;
 import com.teillet.parcelle.service.ISupabaseBucketService;
@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
+
+import static com.teillet.parcelle.utils.GeoJsonUtils.transformSimpleFeatureToParcelleDto;
 
 @Component
 @Order(2)
@@ -60,8 +62,8 @@ public class PlotInitialization implements CommandLineRunner {
                 try (Stream<SimpleFeature> featureStream = GeoJsonUtils.toStream(geoJSONReader.getIterator())) {
                     featureStream
                             .parallel()
-                            .map(GeoJsonUtils::transformSimpleFeatureToParcelleDto)
-                            .map(parcelleDto -> ParcelleMapper.MAPPER.toEntity(parcelleDto, townRepository))
+                            .map(simpleFeature -> transformSimpleFeatureToParcelleDto(simpleFeature, townRepository))
+                            .map(parcelleDto -> PlotMapper.MAPPER.toEntity(parcelleDto, townRepository))
                             .forEach(plotService::savePlot);
                 }
             }

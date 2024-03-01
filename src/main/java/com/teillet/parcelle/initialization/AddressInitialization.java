@@ -1,8 +1,8 @@
-package com.teillet.parcelle.initialisation;
+package com.teillet.parcelle.initialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teillet.parcelle.dto.AdresseDto;
-import com.teillet.parcelle.mapper.AdresseMapper;
+import com.teillet.parcelle.mapper.AddressMapper;
 import com.teillet.parcelle.repository.TownRepository;
 import com.teillet.parcelle.service.IAddressService;
 import com.teillet.parcelle.service.ISupabaseBucketService;
@@ -64,7 +64,7 @@ public class AddressInitialization implements CommandLineRunner {
                     .map(line -> getAddressDto(mapper, line))
                     .filter(Objects::nonNull)
                     .filter(adresseDto -> codePostauxValides.contains(adresseDto.getCodeCommune()))
-                    .map(adresseDto -> AdresseMapper.MAPPER.toEntity(adresseDto, townRepository))
+                    .map(adresseDto -> AddressMapper.MAPPER.toEntity(adresseDto, townRepository))
                     .forEach(addressService::saveAddress);
         } catch (Exception e) {
             log.error("Erreur lors de l'import des adresses", e);

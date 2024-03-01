@@ -12,9 +12,9 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
-public class ParcelleDto {
+public class PlotDto {
 	private final String id;
-	private final String commune;
+	private final CommuneDto commune;
 	private final String prefixe;
 	private final String section;
 	private final String numero;

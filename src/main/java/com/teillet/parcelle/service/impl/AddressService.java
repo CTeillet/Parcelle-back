@@ -1,7 +1,7 @@
 package com.teillet.parcelle.service.impl;
 
 import com.teillet.parcelle.model.Address;
-import com.teillet.parcelle.repository.AdresseRepository;
+import com.teillet.parcelle.repository.AddressRepository;
 import com.teillet.parcelle.service.IAddressService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,26 +12,26 @@ import java.util.List;
 @AllArgsConstructor
 public class AddressService implements IAddressService {
 
-	private final AdresseRepository adresseRepository;
+	private final AddressRepository addressRepository;
 
 	@Override
 	public Long addressNumber() {
-		return adresseRepository.count();
+		return addressRepository.count();
 	}
 
 	@Override
 	public void saveAddress(Address address) {
-		adresseRepository.save(address);
+		addressRepository.save(address);
 	}
 
 	@Override
 	public Address getAddressByPlotId(String id) {
-		return adresseRepository.findByCodesParcellesContains(id);
+		return addressRepository.findByCodesParcellesContains(id);
 	}
 
 	@Override
 	public List<String> getAddressTypes() {
-		return adresseRepository.findDistinctDestinationPrincipale();
+		return addressRepository.findDistinctDestinationPrincipale();
 	}
 
 }

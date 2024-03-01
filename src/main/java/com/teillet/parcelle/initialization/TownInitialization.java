@@ -1,8 +1,8 @@
-package com.teillet.parcelle.initialisation;
+package com.teillet.parcelle.initialization;
 
 
 import com.teillet.parcelle.dto.CommuneDto;
-import com.teillet.parcelle.mapper.CommuneMapper;
+import com.teillet.parcelle.mapper.TownMapper;
 import com.teillet.parcelle.model.Commune;
 import com.teillet.parcelle.service.ITownService;
 import com.teillet.parcelle.service.ISupabaseBucketService;
@@ -48,7 +48,7 @@ public class TownInitialization implements CommandLineRunner {
 		//Filter les communeDtos pour ne garder que celles qui concernent le département choisi
 		List<CommuneDto> communeDtosFiltre = communeDtos.parallelStream().filter(communeDto -> communeDto.getNomDept().equals(departement)).toList();
 		//Conversion des communeDtos en communes
-		List<Commune> towns = CommuneMapper.MAPPER.toEntity(communeDtosFiltre);
+		List<Commune> towns = TownMapper.MAPPER.toEntity(communeDtosFiltre);
 		log.info("Nombre de communes : " + towns.size());
 		//Enregistrement des communes
 		List<Commune> savedTowns = townService.saveTowns(towns);

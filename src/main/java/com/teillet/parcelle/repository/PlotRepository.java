@@ -1,6 +1,6 @@
 package com.teillet.parcelle.repository;
 
-import com.teillet.parcelle.dto.ParcelleClusterDto;
+import com.teillet.parcelle.dto.PlotClusterDto;
 import com.teillet.parcelle.model.Plot;
 import org.geolatte.geom.jts.JTS;
 import org.locationtech.jts.geom.Polygon;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Repository
-public interface ParcelleRepository extends JpaRepository<Plot, String> {
+public interface PlotRepository extends JpaRepository<Plot, String> {
 	List<Plot> findByAdresse_DestinationPrincipaleAndSupprime(@NonNull String destinationPrincipale, @NonNull Boolean supprime);
 
 	@Query("""
@@ -53,17 +53,33 @@ public interface ParcelleRepository extends JpaRepository<Plot, String> {
 	)
 	List<Object[]> getParcelleClustersQuery();
 
-	default List<ParcelleClusterDto> getParcelleClusters() {
+	default List<PlotClusterDto> getPlotClusters() {
 		return getParcelleClustersQuery()
 				.parallelStream()
-				.map(ParcelleRepository::creationParcelleCluster)
+				.map(PlotRepository::creationParcelleCluster)
 				.collect(Collectors.toList());
 	}
 
-	private static ParcelleClusterDto creationParcelleCluster(Object[] row) {
+	private static PlotClusterDto creationParcelleCluster(Object[] row) {
 		List<String> intersectingIds = Arrays.asList((String[]) row[0]);
 		//noinspection unchecked
 		Polygon jtsPolygon = JTS.to( (org.geolatte.geom.Polygon<org.geolatte.geom.Position>) row[1]);
-		return new ParcelleClusterDto(intersectingIds, jtsPolygon);
+		return new PlotClusterDto(intersectingIds, jtsPolygon);
+	}
+
+	@Query(nativeQuery = true, value =
+			"""
+			SELECT array_agg(id) AS intersecting_ids, ST_ConcaveHull(ST_Union(public.parcelle.geom), 0.5) AS geometry
+			FROM parcelle
+			WHERE id IN ?1 group by public.parcelle.geom
+			"""
+	)
+	List<Object[]> getPlotCluster(List<String> plotIds);
+
+	default List<PlotClusterDto> getBlock(List<String> plotIds) {
+		return getPlotCluster(plotIds)
+				.parallelStream()
+				.map(PlotRepository::creationParcelleCluster)
+				.collect(Collectors.toList());
 	}
 }
