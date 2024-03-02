@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Stream;
 
-import static com.teillet.parcelle.utils.GeoJsonUtils.transformSimpleFeatureToParcelleDto;
-
 @Component
 @Order(2)
 @RequiredArgsConstructor
@@ -62,7 +60,7 @@ public class PlotInitialization implements CommandLineRunner {
                 try (Stream<SimpleFeature> featureStream = GeoJsonUtils.toStream(geoJSONReader.getIterator())) {
                     featureStream
                             .parallel()
-                            .map(simpleFeature -> transformSimpleFeatureToParcelleDto(simpleFeature, townRepository))
+                            .map(GeoJsonUtils::transformSimpleFeatureToParcelleDto)
                             .map(parcelleDto -> PlotMapper.MAPPER.toEntity(parcelleDto, townRepository))
                             .forEach(plotService::savePlot);
                 }

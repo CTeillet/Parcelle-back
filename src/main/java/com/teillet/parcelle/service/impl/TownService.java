@@ -1,6 +1,6 @@
 package com.teillet.parcelle.service.impl;
 
-import com.teillet.parcelle.model.Commune;
+import com.teillet.parcelle.model.City;
 import com.teillet.parcelle.repository.TownRepository;
 import com.teillet.parcelle.service.ITownService;
 import jakarta.transaction.Transactional;
@@ -21,7 +21,7 @@ public class TownService implements ITownService {
 
     @Override
     @Transactional
-    public List<Commune> saveTowns(List<Commune> communes) {
-        return townRepository.saveAll(communes);
+    public List<City> saveTowns(List<City> cities) {
+        return townRepository.saveAll(cities);
     }
 }

@@ -1,6 +1,9 @@
 package com.teillet.parcelle.controller;
 
 import com.teillet.parcelle.dto.PlotClusterDto;
+import com.teillet.parcelle.mapper.BlockMapper;
+import com.teillet.parcelle.model.Block;
+import com.teillet.parcelle.repository.PlotRepository;
 import com.teillet.parcelle.service.impl.BlockService;
 import com.teillet.parcelle.utils.PlotClusterUtils;
 import lombok.AllArgsConstructor;
@@ -17,6 +20,7 @@ import java.util.List;
 @RequestMapping("/api/private/block")
 public class BlockController {
     private final BlockService blockService;
+    private final PlotRepository plotRepository;
 
     @GetMapping("/generatePateTemporaires")
     public ResponseEntity<String> generatePate() throws IOException {
@@ -30,10 +34,10 @@ public class BlockController {
     @PostMapping("/generate")
     public ResponseEntity<String> generateBlock(@RequestBody List<String> ids) throws IOException {
         log.info("Génération des blocs");
-        List<PlotClusterDto> block = blockService.generateBlock(ids);
-//        blockService.saveBlock(block);
-        log.info("Génération des blocs terminée");
-        return ResponseEntity.ok(PlotClusterUtils.plotsClusterToGeoJson(block));
+        List<PlotClusterDto> blocks = blockService.generateBlock(ids);
+        List<Block> savedBlocks = blockService.saveBlocks(BlockMapper.MAPPER.plotClusterDtosToEntity(blocks, plotRepository));
+        log.info("Génération des blocs terminée : {}", savedBlocks.size());
+        return ResponseEntity.ok(PlotClusterUtils.plotsClusterToGeoJson(blocks));
     }
 
 }

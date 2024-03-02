@@ -1,7 +1,10 @@
 package com.teillet.parcelle.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import java.util.ArrayList;
@@ -13,15 +16,15 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
-@Table(name = "pate")
+@Table(name = "block")
 public class Block {
 	@Id
-	@Generated
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "territoire_id")
-	private Territoire territoire;
+	@JoinColumn(name = "territory_id")
+	private Territory territory;
 
 	@OneToMany(mappedBy = "block", orphanRemoval = true)
 	@ToString.Exclude

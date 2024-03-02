@@ -1,7 +1,7 @@
 package com.teillet.parcelle.mapper;
 
-import com.teillet.parcelle.dto.PlotDto;
-import com.teillet.parcelle.model.Commune;
+import com.teillet.parcelle.dto.PlotFileDto;
+import com.teillet.parcelle.model.City;
 import com.teillet.parcelle.model.Plot;
 import com.teillet.parcelle.repository.TownRepository;
 import org.mapstruct.Context;
@@ -11,17 +11,17 @@ import org.mapstruct.factory.Mappers;
 
 @Mapper
 public interface PlotMapper {
-
     PlotMapper MAPPER = Mappers.getMapper(PlotMapper.class);
 
-    @Mapping(target = "adresse", ignore = true)
-    @Mapping(target = "supprime", constant = "false")
-    @Mapping(target = "block", ignore = true)
     @Mapping(target = "surface", source = "contenance")
-    Plot toEntity(PlotDto plotDto, @Context TownRepository townRepository);
+    @Mapping(target = "city", source = "commune")
+    @Mapping(target = "address", ignore = true)
+    @Mapping(target = "deleted", constant = "false")
+    @Mapping(target = "block", ignore = true)
+    Plot toEntity(PlotFileDto plotFileDto, @Context TownRepository townRepository);
 
-    default Commune toCommune(String inseeCom, @Context TownRepository townRepository) {
-        return townRepository.findById(inseeCom).orElse(null);
+    default City toCity(String commune, @Context TownRepository townRepository) {
+        return townRepository.findById(commune).orElse(null);
     }
 
 }

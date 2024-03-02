@@ -14,21 +14,24 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class Territoire {
+public class City {
 	@Id
-	@Generated
-	private Long id;
+	String inseeCityName;
+	String zipCode;
+	String cityName;
+	String countyName;
+	String nomReg;
 
-	@OneToMany(mappedBy = "territoire", orphanRemoval = true)
+	@OneToMany(mappedBy = "city")
 	@ToString.Exclude
-	private List<Block> blocks;
+	List<Plot> plots;
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-		Territoire that = (Territoire) o;
-		return getId() != null && Objects.equals(getId(), that.getId());
+		City city = (City) o;
+		return getInseeCityName() != null && Objects.equals(getInseeCityName(), city.getInseeCityName());
 	}
 
 	@Override

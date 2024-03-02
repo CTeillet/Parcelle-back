@@ -13,29 +13,29 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 @Entity
-@Table(name = "adresse")
+@Table(name = "address")
 public class Address {
 	@Id
 	private String id;
 	private String codeVoie;
-	private String numeroComplet;
-	private String numero;
+	private String fullNumber;
+	private String number;
 	private String repetition;
-	private boolean pseudoNumero;
-	private String nomVoie;
-	private String nomVoieOriginal;
-	private String nomVoieType;
-	private String nomVoieFantoir;
-	private String destinationPrincipale;
+	private boolean pseudoNumber;
+	private String laneName;
+	private String originalNameLane;
+	private String laneNameType;
+	private String laneNameFantoir;
+	private String mainDestination;
 
 	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(name = "adresse_code_parcelle", joinColumns = @JoinColumn(name = "adresse_id"))
-	@Column(name = "code_parcelle")
-	private List<String> codesParcelles;
+	@CollectionTable(name = "address_plot_code", joinColumns = @JoinColumn(name = "address_id"))
+	@Column(name = "plot_id")
+	private List<String> plotIds;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "commune_insee_com", nullable = false)
-	private Commune commune;
+	@JoinColumn(name = "insee_city_name", nullable = false)
+	private City city;
 
 	@Override
 	public boolean equals(Object o) {
@@ -47,7 +47,7 @@ public class Address {
 
 	@Override
 	public String toString() {
-		return numeroComplet + " " + nomVoieOriginal + ", " + commune.getNomCom() + " " + commune.getCodePostal();
+		return fullNumber + " " + originalNameLane + ", " + city.getCityName() + " " + city.getZipCode();
 	}
 
 	@Override

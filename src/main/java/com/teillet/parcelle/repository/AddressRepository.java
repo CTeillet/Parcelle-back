@@ -9,11 +9,11 @@ import java.util.List;
 
 public interface AddressRepository extends JpaRepository<Address, String> {
 	//Recuperer l'adresse correspondant à une parcelle en triant par ordre croissant d'adresse_id et en gardant le plus petit
-	@Query(value = "SELECT * FROM adresse WHERE id IN (SELECT adresse_id FROM adresse_code_parcelle WHERE code_parcelle = ?1) ORDER BY id LIMIT 1", nativeQuery = true)
+	@Query(value = "SELECT * FROM address WHERE id IN (SELECT address_id FROM address_plot_code WHERE plot_id = ?1) ORDER BY id LIMIT 1", nativeQuery = true)
 	Address findByCodesParcellesContains(@NonNull String codesParcelles);
 
 	//Recuperation des differentes valeur de destination_principal
-	@Query(value = "Select distinct a.destination_principale from adresse a RIGHT JOIN public.parcelle p on a.id = p.adresse_id ORDER BY destination_principale", nativeQuery = true)
+	@Query(value = "Select distinct a.main_destination from address a RIGHT JOIN plot p on a.id = p.address_id ORDER BY main_destination", nativeQuery = true)
 	List<String> findDistinctDestinationPrincipale();
 
 }

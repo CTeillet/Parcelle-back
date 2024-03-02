@@ -1,10 +1,10 @@
 package com.teillet.parcelle.service;
 
-import com.teillet.parcelle.model.Commune;
+import com.teillet.parcelle.model.City;
 
 import java.util.List;
 
 public interface ITownService {
 	Long townNumber();
-	List<Commune> saveTowns(List<Commune> communes);
+	List<City> saveTowns(List<City> cities);
 }

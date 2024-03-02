@@ -13,6 +13,6 @@ import java.util.List;
 @NoArgsConstructor(force = true)
 public class BlockDto {
 	private final Long id;
-	private final TerritoryDto territoire;
-	private final List<PlotDto> plots;
+	private final TerritoryDto territory;
+	private final List<PlotFileDto> plots;
 }

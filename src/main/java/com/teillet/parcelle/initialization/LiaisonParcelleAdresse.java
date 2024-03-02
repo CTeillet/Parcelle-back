@@ -34,7 +34,7 @@ public class LiaisonParcelleAdresse implements CommandLineRunner {
         Address adresse = adresseService.getAddressByPlotId(plot.getId());
         if (adresse != null) {
             log.info("Adresse {} correspondant à la parcelle {}", adresse.getId(), plot.getId());
-            plot.setAdresse(adresse);
+            plot.setAddress(adresse);
             parcelleService.savePlot(plot);
         } else {
             log.error("Aucune adresse correspondant à la parcelle {}", plot.getId());

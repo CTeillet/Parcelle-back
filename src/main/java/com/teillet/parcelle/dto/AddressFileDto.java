@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
-public class AdresseDto {
+public class AddressFileDto {
     private String id;
     private String codeVoie;
     private String codeCommune;

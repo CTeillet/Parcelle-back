@@ -1,9 +1,11 @@
 package com.teillet.parcelle.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import lombok.*;
+import jakarta.persistence.*;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.Hibernate;
 
 import java.util.List;
@@ -14,29 +16,21 @@ import java.util.Objects;
 @Setter
 @ToString
 @RequiredArgsConstructor
-public class Commune {
-
+public class Territory {
 	@Id
-	String inseeCom;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-	String codePostal;
-
-	String nomCom;
-
-	String nomDept;
-
-	String nomReg;
-
-	@OneToMany(mappedBy = "commune")
+	@OneToMany(mappedBy = "territory", orphanRemoval = true)
 	@ToString.Exclude
-	List<Plot> plots;
+	private List<Block> blocks;
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-		Commune commune = (Commune) o;
-		return getInseeCom() != null && Objects.equals(getInseeCom(), commune.getInseeCom());
+		Territory that = (Territory) o;
+		return getId() != null && Objects.equals(getId(), that.getId());
 	}
 
 	@Override

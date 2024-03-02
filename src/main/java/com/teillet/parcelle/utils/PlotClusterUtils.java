@@ -22,10 +22,10 @@ public class PlotClusterUtils {
         throw new IllegalStateException("Utility class");
     }
 
-    public static String plotsClusterToGeoJson(List<PlotClusterDto> plotClusterDtos) throws IOException {
+    public static String plotsClusterToGeoJson(List<PlotClusterDto> plotClusters) throws IOException {
         SimpleFeatureType featureType = createFeatureType();
 
-        SimpleFeatureCollection featureCollection = createFeatureCollection(plotClusterDtos, featureType);
+        SimpleFeatureCollection featureCollection = createFeatureCollection(plotClusters, featureType);
 
         return GeoJsonUtils.convertToGeoJSON(featureCollection);
     }
@@ -38,18 +38,18 @@ public class PlotClusterUtils {
         return builder.buildFeatureType();
     }
 
-    private static SimpleFeatureCollection createFeatureCollection(List<PlotClusterDto> plotClusterDtos, SimpleFeatureType featureType) {
+    private static SimpleFeatureCollection createFeatureCollection(List<PlotClusterDto> plotClusters, SimpleFeatureType featureType) {
         SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureType);
 
-        return plotClusterDtos
+        return plotClusters
                 .stream()
                 .map(parcelleClusterDto -> createSimpleFeature(featureBuilder, parcelleClusterDto))
                 .collect(() -> new ListFeatureCollection(featureType), ListFeatureCollection::add, ListFeatureCollection::addAll);
     }
 
-    private static SimpleFeature createSimpleFeature(SimpleFeatureBuilder featureBuilder, PlotClusterDto plotClusterDtos) {
-        featureBuilder.add(plotClusterDtos.getIntersectingIds());
-        featureBuilder.add(plotClusterDtos.getGeometry());
+    private static SimpleFeature createSimpleFeature(SimpleFeatureBuilder featureBuilder, PlotClusterDto plotClusters) {
+        featureBuilder.add(plotClusters.getIntersectingIds());
+        featureBuilder.add(plotClusters.getGeometry());
 
         return featureBuilder.buildFeature(null);
     }

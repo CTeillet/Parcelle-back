@@ -1,7 +1,7 @@
 package com.teillet.parcelle.initialization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.teillet.parcelle.dto.AdresseDto;
+import com.teillet.parcelle.dto.AddressFileDto;
 import com.teillet.parcelle.mapper.AddressMapper;
 import com.teillet.parcelle.repository.TownRepository;
 import com.teillet.parcelle.service.IAddressService;
@@ -63,17 +63,17 @@ public class AddressInitialization implements CommandLineRunner {
                     .parallel()
                     .map(line -> getAddressDto(mapper, line))
                     .filter(Objects::nonNull)
-                    .filter(adresseDto -> codePostauxValides.contains(adresseDto.getCodeCommune()))
-                    .map(adresseDto -> AddressMapper.MAPPER.toEntity(adresseDto, townRepository))
+                    .filter(addressFileDto -> codePostauxValides.contains(addressFileDto.getCodeCommune()))
+                    .map(addressFileDto -> AddressMapper.MAPPER.toEntity(addressFileDto, townRepository))
                     .forEach(addressService::saveAddress);
         } catch (Exception e) {
             log.error("Erreur lors de l'import des adresses", e);
         }
     }
 
-    private AdresseDto getAddressDto(ObjectMapper mapper, String line) {
+    private AddressFileDto getAddressDto(ObjectMapper mapper, String line) {
         try {
-            return mapper.readValue(line, AdresseDto.class);
+            return mapper.readValue(line, AddressFileDto.class);
         } catch (IOException e) {
             log.error("Erreur lors de la lecture d'une ligne", e);
             return null;

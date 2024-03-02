@@ -1,8 +1,6 @@
 package com.teillet.parcelle.utils;
 
-import com.teillet.parcelle.dto.PlotDto;
-import com.teillet.parcelle.mapper.TownMapper;
-import com.teillet.parcelle.repository.TownRepository;
+import com.teillet.parcelle.dto.PlotFileDto;
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -47,10 +45,10 @@ public class GeoJsonUtils {
         return StreamSupport.stream(iterable.spliterator(), false);
     }
 
-    public static PlotDto transformSimpleFeatureToParcelleDto(SimpleFeature feature, TownRepository townRepository) {
-	    return PlotDto.builder()
+    public static PlotFileDto transformSimpleFeatureToParcelleDto(SimpleFeature feature) {
+	    return PlotFileDto.builder()
                 .id(getStringAttribute(feature, "id"))
-                .commune(TownMapper.MAPPER.toDto(townRepository.findById(getStringAttribute(feature, "commune")).orElse(null)))
+                .commune(getStringAttribute(feature, "commune"))
                 .prefixe(getStringAttribute(feature, "prefixe"))
                 .section(getStringAttribute(feature, "section"))
                 .numero(getStringAttribute(feature, "numero"))

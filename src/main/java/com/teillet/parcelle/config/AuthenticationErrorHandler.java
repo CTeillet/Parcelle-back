@@ -1,7 +1,7 @@
 package com.teillet.parcelle.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.teillet.parcelle.model.ErrorMessage;
+import com.teillet.parcelle.dto.ErrorMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

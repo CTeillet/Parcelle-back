@@ -1,4 +1,4 @@
-package com.teillet.parcelle.model;
+package com.teillet.parcelle.dto;
 
 import lombok.Value;
 

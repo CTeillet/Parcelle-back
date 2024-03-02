@@ -1,6 +1,8 @@
 package com.teillet.parcelle.service.impl;
 
 import com.teillet.parcelle.dto.PlotClusterDto;
+import com.teillet.parcelle.model.Block;
+import com.teillet.parcelle.repository.BlockRepository;
 import com.teillet.parcelle.repository.PlotRepository;
 import com.teillet.parcelle.service.IBlockService;
 import com.teillet.parcelle.utils.PlotClusterUtils;
@@ -15,11 +17,12 @@ import java.util.List;
 @Slf4j
 public class BlockService implements IBlockService {
     private final PlotRepository plotRepository;
+    private final BlockRepository blockRepository;
 
     @Override
     public List<PlotClusterDto> generationPateTemporaires() {
         log.info("Génération des pates temporaires");
-        List<PlotClusterDto> plotClusterDtos = PlotClusterUtils.getPlotClusters(plotRepository.getParcelleClustersQuery());
+        List<PlotClusterDto> plotClusterDtos = PlotClusterUtils.getPlotClusters(plotRepository.getPlotClustersQuery());
         log.info("Génération des pates temporaires terminée");
         return plotClusterDtos;
     }
@@ -31,4 +34,13 @@ public class BlockService implements IBlockService {
         log.info("Génération du pâté terminée");
         return plotClusterDto;
     }
+
+    @Override
+    public List<Block> saveBlocks(List<Block> blocks) {
+        log.info("Sauvegarde des blocs");
+        List<Block> savedBlocks = blockRepository.saveAll(blocks);
+        log.info("Sauvegarde des blocs terminée");
+        return savedBlocks;
+    }
+
 }

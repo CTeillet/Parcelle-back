@@ -24,14 +24,14 @@ public class PlotService implements IPlotService {
 	@Override
     public boolean deletePlots(List<String> ids) {
         log.info("Nombre de parcelles à supprimer : " + ids.size());
-        int nbParcellesSupprimees = plotRepository.updateSupprimeByIdIn(ids);
+        int nbParcellesSupprimees = plotRepository.updateDeletedByIdIn(ids);
         log.info("Nombre de parcelles supprimées : " + nbParcellesSupprimees);
         return nbParcellesSupprimees == ids.size();
     }
 
     @Override
     public CompletableFuture<List<Plot>> getNonDeletedPlots() {
-        return CompletableFuture.completedFuture(plotRepository.findBySupprimeFalse());
+        return CompletableFuture.completedFuture(plotRepository.findByDeletedFalse());
     }
 
     @Override
@@ -41,7 +41,7 @@ public class PlotService implements IPlotService {
 
     @Override
     public List<Plot> recuperationParcellesNonLieesAdresse() {
-        return plotRepository.findByAdresseIsNull();
+        return plotRepository.findByAddressIsNull();
     }
 
     @Override
@@ -53,12 +53,12 @@ public class PlotService implements IPlotService {
 
     @Override
     public Long nombreParcelleLieesAdresse() {
-        return plotRepository.countByAdresseIsNotNull();
+        return plotRepository.countByAddressIsNotNull();
     }
 
     @Override
     public CompletableFuture<List<Plot>> recuperationParcellesParDestinationPrincipaleEtSupprime(String destinationPrincipale, boolean supprimer) {
         log.info("Récupération des parcelles avec destinationPrincipale = {} et supprimer = {}", destinationPrincipale, supprimer);
-        return CompletableFuture.completedFuture(plotRepository.findByAdresse_DestinationPrincipaleAndSupprime(destinationPrincipale, supprimer));
+        return CompletableFuture.completedFuture(plotRepository.findByAddress_MainDestinationAndDeleted(destinationPrincipale, supprimer));
     }
 }

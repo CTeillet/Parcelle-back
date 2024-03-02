@@ -27,7 +27,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 	private final AuthenticationErrorHandler authenticationErrorHandler;
 
-
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         /*
@@ -37,8 +36,8 @@ public class SecurityConfig {
 		return http
 				.addFilterBefore(new RequestLoggingFilter(), UsernamePasswordAuthenticationFilter.class)
 				.authorizeHttpRequests((authorize) -> authorize
-						.requestMatchers("/api/public").permitAll()
 						.requestMatchers("/api/private/**").authenticated()
+						.anyRequest().permitAll()
 				)
 				.cors(withDefaults())
 				.oauth2ResourceServer(oauth2 -> oauth2

@@ -14,12 +14,12 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "parcelle", schema = "public", indexes = {
-		@Index(name = "parcelle_pkey", columnList = "id", unique = true),
-		@Index(name = "parcelle_commune_insee_com_idx", columnList = "commune_insee_com"),
-		@Index(name = "parcelle_pate_id_idx", columnList = "pate_id"),
-		@Index(name = "parcelle_adresse_id_idx", columnList = "adresse_id"),
-		@Index(name = "parcelle_supprime_idx", columnList = "supprime")
+@Table(name = "plot", schema = "public", indexes = {
+		@Index(name = "plot_pkey", columnList = "id", unique = true),
+		@Index(name = "plot_insee_city_name_idx", columnList = "insee_city_name"),
+		@Index(name = "plot_block_id_idx", columnList = "block_id"),
+		@Index(name = "plot_address_id_idx", columnList = "address_id"),
+		@Index(name = "plot_deleted_idx", columnList = "deleted")
 })
 public class Plot {
 	@Id
@@ -32,21 +32,21 @@ public class Plot {
 	private Integer surface;
 
 	@ManyToOne(optional = false, fetch = FetchType.EAGER)
-	@JoinColumn(name = "commune_insee_com", nullable = false)
-	private Commune commune;
+	@JoinColumn(name = "insee_city_name", nullable = false)
+	private City city;
 
 	@ToString.Exclude
 	@ManyToOne
-	@JoinColumn(name = "pate_id")
+	@JoinColumn(name = "block_id")
 	private Block block;
 
 	//set default value to false
-	@Column(name = "supprime", nullable = false, columnDefinition = "boolean default false")
-	private Boolean supprime;
+	@Column(name = "deleted", nullable = false, columnDefinition = "boolean default false")
+	private Boolean deleted;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "adresse_id")
-	private Address adresse;
+	@JoinColumn(name = "address_id")
+	private Address address;
 
 	@Override
 	public boolean equals(Object o) {

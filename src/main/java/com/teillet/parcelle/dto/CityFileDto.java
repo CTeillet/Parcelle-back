@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CommuneDto {
+public class CityFileDto {
     @JsonProperty("geo_point_2d")
     private CoordonneesGpsDto geoPoint2d;
     @JsonProperty("id_geofla")

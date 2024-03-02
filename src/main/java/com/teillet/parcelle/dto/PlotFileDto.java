@@ -12,15 +12,15 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
-public class PlotDto {
+public class PlotFileDto {
 	private final String id;
-	private final CommuneDto commune;
+	private final String commune;
 	private final String prefixe;
 	private final String section;
 	private final String numero;
 	private final Integer contenance;
 	private final Boolean arpente;
-	private Date created;
-	private Date updated;
-	private Polygon geom;
+	private final Date created;
+	private final Date updated;
+	private final Polygon geom;
 }

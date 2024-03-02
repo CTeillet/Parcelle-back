@@ -1,9 +1,9 @@
 package com.teillet.parcelle.initialization;
 
 
-import com.teillet.parcelle.dto.CommuneDto;
-import com.teillet.parcelle.mapper.TownMapper;
-import com.teillet.parcelle.model.Commune;
+import com.teillet.parcelle.dto.CityFileDto;
+import com.teillet.parcelle.mapper.CityMapper;
+import com.teillet.parcelle.model.City;
 import com.teillet.parcelle.service.ITownService;
 import com.teillet.parcelle.service.ISupabaseBucketService;
 import com.teillet.parcelle.service.ITemporaryFileService;
@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class TownInitialization implements CommandLineRunner {
+public class CityInitialization implements CommandLineRunner {
 	private final ITownService townService;
 	private final ITemporaryFileService temporaryFileService;
 	private final ISupabaseBucketService supabaseBucketService;
@@ -44,14 +44,14 @@ public class TownInitialization implements CommandLineRunner {
 		//Téléchargement du fichier depuis le bucket supabase
 		String pathDownloadedFile = FileUtils.downloadFile(fichierCodePostal, supabaseBucketService, temporaryFileService);
 		//Lecture du fichier
-		List<CommuneDto> communeDtos = FileUtils.readFile(pathDownloadedFile, CommuneDto.class);
+		List<CityFileDto> cityFileDtos = FileUtils.readFile(pathDownloadedFile, CityFileDto.class);
 		//Filter les communeDtos pour ne garder que celles qui concernent le département choisi
-		List<CommuneDto> communeDtosFiltre = communeDtos.parallelStream().filter(communeDto -> communeDto.getNomDept().equals(departement)).toList();
+		List<CityFileDto> cityFileDtosFiltre = cityFileDtos.parallelStream().filter(cityFileDto -> cityFileDto.getNomDept().equals(departement)).toList();
 		//Conversion des communeDtos en communes
-		List<Commune> towns = TownMapper.MAPPER.toEntity(communeDtosFiltre);
+		List<City> towns = CityMapper.MAPPER.toEntity(cityFileDtosFiltre);
 		log.info("Nombre de communes : " + towns.size());
 		//Enregistrement des communes
-		List<Commune> savedTowns = townService.saveTowns(towns);
+		List<City> savedTowns = townService.saveTowns(towns);
 		log.info("Nombre de communes sauvegardées : " + savedTowns.size());
 	}
 

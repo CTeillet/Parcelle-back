@@ -42,9 +42,9 @@ public class PlotUtils {
     private static SimpleFeature createSimpleFeature(SimpleFeatureBuilder featureBuilder, Plot plot) {
         featureBuilder.add(plot.getId());
         featureBuilder.add(plot.getSurface());
-        featureBuilder.add(plot.getCommune().getNomCom());
+        featureBuilder.add(plot.getCity().getCityName());
         featureBuilder.add(plot.getGeom());
-        featureBuilder.add(plot.getAdresse());
+        featureBuilder.add(plot.getAddress());
 
         return featureBuilder.buildFeature(null);
     }
