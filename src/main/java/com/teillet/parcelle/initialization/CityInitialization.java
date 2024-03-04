@@ -8,6 +8,7 @@ import com.teillet.parcelle.service.ITownService;
 import com.teillet.parcelle.service.ISupabaseBucketService;
 import com.teillet.parcelle.service.ITemporaryFileService;
 import com.teillet.parcelle.utils.FileUtils;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ public class CityInitialization implements CommandLineRunner {
 	private String departement;
 
 	@Override
+	@Observed(name = "initialization.city")
 	public void run(String... args) throws Exception {
 		if (townService.townNumber() > 0) {
 			log.info("Il y a déjà des communes enregistrées. L'import n'est pas nécessaire.");

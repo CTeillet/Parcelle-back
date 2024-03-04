@@ -3,6 +3,7 @@ package com.teillet.parcelle.service.impl;
 import com.teillet.parcelle.model.Plot;
 import com.teillet.parcelle.repository.PlotRepository;
 import com.teillet.parcelle.service.IPlotService;
+import io.micrometer.observation.annotation.Observed;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class PlotService implements IPlotService {
     }
 
     @Override
+    @Observed(name = "plot.getNonDeletedPlots")
     public CompletableFuture<List<Plot>> getNonDeletedPlots() {
         return CompletableFuture.completedFuture(plotRepository.findByDeletedFalse());
     }

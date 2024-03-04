@@ -3,7 +3,7 @@ package com.teillet.parcelle.mapper;
 import com.teillet.parcelle.dto.PlotFileDto;
 import com.teillet.parcelle.model.City;
 import com.teillet.parcelle.model.Plot;
-import com.teillet.parcelle.repository.TownRepository;
+import com.teillet.parcelle.repository.CityRepository;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -18,10 +18,10 @@ public interface PlotMapper {
     @Mapping(target = "address", ignore = true)
     @Mapping(target = "deleted", constant = "false")
     @Mapping(target = "block", ignore = true)
-    Plot toEntity(PlotFileDto plotFileDto, @Context TownRepository townRepository);
+    Plot toEntity(PlotFileDto plotFileDto, @Context CityRepository cityRepository);
 
-    default City toCity(String commune, @Context TownRepository townRepository) {
-        return townRepository.findById(commune).orElse(null);
+    default City toCity(String commune, @Context CityRepository cityRepository) {
+        return cityRepository.findById(commune).orElse(null);
     }
 
 }

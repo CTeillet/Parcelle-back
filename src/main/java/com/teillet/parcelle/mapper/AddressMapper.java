@@ -3,7 +3,7 @@ package com.teillet.parcelle.mapper;
 import com.teillet.parcelle.dto.AddressFileDto;
 import com.teillet.parcelle.model.Address;
 import com.teillet.parcelle.model.City;
-import com.teillet.parcelle.repository.TownRepository;
+import com.teillet.parcelle.repository.CityRepository;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -24,9 +24,9 @@ public interface AddressMapper {
 	@Mapping(target = "laneName", source = "nomVoie")
 	@Mapping(target = "fullNumber", source = "numeroComplet")
 	@Mapping(target = "city", source = "codeCommune")
-	Address toEntity(AddressFileDto addressFileDto, @Context TownRepository townRepository);
+	Address toEntity(AddressFileDto addressFileDto, @Context CityRepository cityRepository);
 
-	default City toCity(String cityCode, @Context TownRepository townRepository) {
-		return townRepository.findById(cityCode).orElse(null);
+	default City toCity(String cityCode, @Context CityRepository cityRepository) {
+		return cityRepository.findById(cityCode).orElse(null);
 	}
 }

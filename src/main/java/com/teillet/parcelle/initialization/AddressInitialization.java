@@ -3,11 +3,12 @@ package com.teillet.parcelle.initialization;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teillet.parcelle.dto.AddressFileDto;
 import com.teillet.parcelle.mapper.AddressMapper;
-import com.teillet.parcelle.repository.TownRepository;
+import com.teillet.parcelle.repository.CityRepository;
 import com.teillet.parcelle.service.IAddressService;
 import com.teillet.parcelle.service.ISupabaseBucketService;
 import com.teillet.parcelle.service.ITemporaryFileService;
 import com.teillet.parcelle.utils.FileUtils;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +30,7 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 public class AddressInitialization implements CommandLineRunner {
     private final IAddressService addressService;
-    private final TownRepository townRepository;
+    private final CityRepository cityRepository;
     private final ITemporaryFileService temporaryFileService;
     private final ISupabaseBucketService supabaseBucketService;
 
@@ -41,6 +42,7 @@ public class AddressInitialization implements CommandLineRunner {
     private String delimiter;
 
     @Override
+    @Observed(name = "initialization.address")
     public void run(String... args) throws IOException, ExecutionException, InterruptedException {
         if (addressService.addressNumber() > 0) {
             log.info("Il y a déjà des adresses enregistrées. L'import n'est pas nécessaire.");
@@ -64,7 +66,7 @@ public class AddressInitialization implements CommandLineRunner {
                     .map(line -> getAddressDto(mapper, line))
                     .filter(Objects::nonNull)
                     .filter(addressFileDto -> codePostauxValides.contains(addressFileDto.getCodeCommune()))
-                    .map(addressFileDto -> AddressMapper.MAPPER.toEntity(addressFileDto, townRepository))
+                    .map(addressFileDto -> AddressMapper.MAPPER.toEntity(addressFileDto, cityRepository))
                     .forEach(addressService::saveAddress);
         } catch (Exception e) {
             log.error("Erreur lors de l'import des adresses", e);
