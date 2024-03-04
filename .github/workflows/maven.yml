@@ -244,7 +244,7 @@ jobs:
           # Local file or directory
           localPath: docker-compose.yml
           # Remote file or directory path (file or directories will be created)
-          remotePath: .
+          remotePath: docker-compose.yml
           
       - name: Docker Compose Up
         uses: cross-the-world/ssh-pipeline@v1.2.0
