@@ -123,12 +123,15 @@ jobs:
           push: false
           tags: cteillet/parcelle:${{ github.run_number }}
           outputs: type=docker,dest=parcelle_${{ github.run_number }}.tar
-
+     
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: docker-image
-          path: parcelle_${{ github.run_number }}.tar
+          name: docker-files
+          path: |
+            docker
+            parcelle_${{ github.run_number }}.tar
+            docker-compose.yml
 
   deploy-to-vps:
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -140,7 +143,7 @@ jobs:
       - name: Download artifact
         uses: actions/download-artifact@v2
         with:
-          name: docker-image
+          name: docker-files
           path: .
 
       - name: Nettoyage du dossier docker-images
@@ -155,7 +158,46 @@ jobs:
           pass: ${{ secrets.SSH_PASSWORD}}
           # execute commands on ssh
           script: rm -rf /home/${{ secrets.SSH_USER}}/docker-images/*
-
+          
+      - name: Nettoyage des anciennes images
+        uses: cross-the-world/ssh-pipeline@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST}}
+          # ssh remote port
+          port: ${{ secrets.SSH_PORT}}
+          # ssh remote user
+          user: ${{ secrets.SSH_USER}}
+          # ssh remote password
+          pass: ${{ secrets.SSH_PASSWORD}}
+          # execute commands on ssh
+          script: docker images --format "{{.ID}} {{.Repository}}:{{.Tag}}" | awk '/cteillet\/parcelle/ {print $1}' | grep -v "$(docker ps -q | xargs docker inspect --format '{{.Image}}')" | xargs docker rmi
+                
+      - name: Nettoyage du dossier docker
+        uses: cross-the-world/ssh-pipeline@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST}}
+          # ssh remote port
+          port: ${{ secrets.SSH_PORT}}
+          # ssh remote user
+          user: ${{ secrets.SSH_USER}}
+          # ssh remote password
+          pass: ${{ secrets.SSH_PASSWORD}}
+          # execute commands on ssh
+          script: rm -rf /home/${{ secrets.SSH_USER}}/docker
+          
+      - name: Docker Compose Down
+        uses: cross-the-world/ssh-pipeline@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST}}
+          # ssh remote port
+          port: ${{ secrets.SSH_PORT}}
+          # ssh remote user
+          user: ${{ secrets.SSH_USER}}
+          # ssh remote password
+          pass: ${{ secrets.SSH_PASSWORD}}
+          # execute commands on ssh
+          script: docker compose down -d
+      
       - name: Transfer docker images to VPS
         uses: Creepios/sftp-action@v1.0.5
         with:
@@ -172,6 +214,51 @@ jobs:
           # Remote file or directory path (file or directories will be created)
           remotePath: docker-images/
 
+      - name: Transfer docker repository to VPS
+        uses: Creepios/sftp-action@v1.0.5
+        with:
+          # Host to login
+          host: ${{ secrets.SSH_HOST}}
+          # Port to login
+          port: ${{ secrets.SSH_PORT}}
+          # Username to login
+          username: ${{ secrets.SSH_USER}}
+           # Passwort to login
+          password: ${{ secrets.SSH_PASSWORD}}
+          # Local file or directory
+          localPath: docker
+          # Remote file or directory path (file or directories will be created)
+          remotePath: /
+
+      - name: Transfer docker compose file to VPS
+        uses: Creepios/sftp-action@v1.0.5
+        with:
+          # Host to login
+          host: ${{ secrets.SSH_HOST}}
+          # Port to login
+          port: ${{ secrets.SSH_PORT}}
+          # Username to login
+          username: ${{ secrets.SSH_USER}}
+           # Passwort to login
+          password: ${{ secrets.SSH_PASSWORD}}
+          # Local file or directory
+          localPath: docker-compose.yml
+          # Remote file or directory path (file or directories will be created)
+          remotePath: /
+          
+      - name: Docker Compose Up
+        uses: cross-the-world/ssh-pipeline@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST}}
+          # ssh remote port
+          port: ${{ secrets.SSH_PORT}}
+          # ssh remote user
+          user: ${{ secrets.SSH_USER}}
+          # ssh remote password
+          pass: ${{ secrets.SSH_PASSWORD}}
+          # execute commands on ssh
+          script: docker compose -f /home/${{ secrets.SSH_USER}}/docker-compose.yml up -d
+    
       - name: SSH into VPS and load Docker image
         uses: cross-the-world/ssh-pipeline@v1.2.0
         with:
