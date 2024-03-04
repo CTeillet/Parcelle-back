@@ -228,7 +228,7 @@ jobs:
           # Local file or directory
           localPath: docker
           # Remote file or directory path (file or directories will be created)
-          remotePath: .
+          remotePath: docker/
 
       - name: Transfer docker compose file to VPS
         uses: Creepios/sftp-action@v1.0.5
