@@ -4,35 +4,26 @@ import com.teillet.parcelle.model.Plot;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
 
 @Repository
 public interface PlotRepository extends JpaRepository<Plot, String> {
-	List<Plot> findByAddress_MainDestinationAndDeleted(@NonNull String mainDestination, @NonNull Boolean deleted);
-
+	List<Plot> findByAddresses_MainDestinationAndDeleted(String mainDestination, Boolean deleted);
 	@Query("""
 		SELECT p
 		FROM Plot p
 		LEFT JOIN FETCH p.city
-		LEFT JOIN FETCH p.address
 		WHERE p.deleted = false
 	""")
 	List<Plot> findByDeletedFalse();
 
-	@Transactional
+	//@Transactional
 	@Modifying
 	@Query("update Plot p set p.deleted = true where p.id in ?1")
 	int updateDeletedByIdIn(Collection<String> ids);
-
-	List<Plot> findByAddressIsNull();
-
-	Long countByAddressIsNotNull();
-
 
 	@Query(nativeQuery = true, value =
 			"""

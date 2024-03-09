@@ -4,8 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -28,14 +29,15 @@ public class Address {
 	private String laneNameFantoir;
 	private String mainDestination;
 
-	@ElementCollection(fetch = FetchType.LAZY)
-	@CollectionTable(name = "address_plot_code", joinColumns = @JoinColumn(name = "address_id"))
-	@Column(name = "plot_id")
-	private List<String> plotIds;
-
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "insee_city_name", nullable = false)
 	private City city;
+
+	@ManyToMany
+	@JoinTable(name = "address_plots",
+			joinColumns = @JoinColumn(name = "address_id"),
+			inverseJoinColumns = @JoinColumn(name = "plots_id"))
+	private Set<Plot> plots = new LinkedHashSet<>();
 
 	@Override
 	public boolean equals(Object o) {

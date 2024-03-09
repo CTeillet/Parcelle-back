@@ -3,7 +3,6 @@ package com.teillet.parcelle.service.impl;
 import com.teillet.parcelle.model.City;
 import com.teillet.parcelle.repository.CityRepository;
 import com.teillet.parcelle.service.ITownService;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +19,7 @@ public class TownService implements ITownService {
     }
 
     @Override
-    @Transactional
+    //@Transactional
     public List<City> saveTowns(List<City> cities) {
         return cityRepository.saveAll(cities);
     }

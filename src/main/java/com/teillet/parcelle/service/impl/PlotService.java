@@ -42,25 +42,16 @@ public class PlotService implements IPlotService {
     }
 
     @Override
-    public List<Plot> recuperationParcellesNonLieesAdresse() {
-        return plotRepository.findByAddressIsNull();
-    }
-
-    @Override
-    public void savePlot(Plot plot) {
-        log.info("Enregistrement de la parcelle " + plot.getId());
-        plotRepository.save(plot);
-        log.info("Fin enregistrement de la parcelle " + plot.getId());
-    }
-
-    @Override
-    public Long nombreParcelleLieesAdresse() {
-        return plotRepository.countByAddressIsNotNull();
+    @Observed(name = "plot.savePlots")
+    public void savePlots(List<Plot> plots) {
+        log.info("Enregistrement de " + plots.size() + " parcelles");
+        plotRepository.saveAll(plots);
+        log.info("Fin enregistrement de " + plots.size() + " parcelles");
     }
 
     @Override
     public CompletableFuture<List<Plot>> recuperationParcellesParDestinationPrincipaleEtSupprime(String destinationPrincipale, boolean supprimer) {
         log.info("Récupération des parcelles avec destinationPrincipale = {} et supprimer = {}", destinationPrincipale, supprimer);
-        return CompletableFuture.completedFuture(plotRepository.findByAddress_MainDestinationAndDeleted(destinationPrincipale, supprimer));
+        return CompletableFuture.completedFuture(plotRepository.findByAddresses_MainDestinationAndDeleted(destinationPrincipale, supprimer));
     }
 }

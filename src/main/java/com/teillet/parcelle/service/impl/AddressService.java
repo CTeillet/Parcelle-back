@@ -20,18 +20,13 @@ public class AddressService implements IAddressService {
 	}
 
 	@Override
-	public void saveAddress(Address address) {
-		addressRepository.save(address);
-	}
-
-	@Override
-	public Address getAddressByPlotId(String id) {
-		return addressRepository.findByCodesParcellesContains(id);
-	}
-
-	@Override
 	public List<String> getAddressTypes() {
 		return addressRepository.findDistinctDestinationPrincipale();
+	}
+
+	@Override
+	public void saveAddresses(List<Address> addresses) {
+		addressRepository.saveAll(addresses);
 	}
 
 }

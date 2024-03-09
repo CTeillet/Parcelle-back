@@ -123,7 +123,7 @@ jobs:
           push: false
           tags: cteillet/parcelle:${{ github.run_number }}
           outputs: type=docker,dest=parcelle_${{ github.run_number }}.tar
-     
+
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
@@ -158,7 +158,7 @@ jobs:
           pass: ${{ secrets.SSH_PASSWORD}}
           # execute commands on ssh
           script: rm -rf /home/${{ secrets.SSH_USER}}/docker-images/*
-          
+
       - name: Nettoyage des anciennes images
         uses: cross-the-world/ssh-pipeline@v1.2.0
         with:
@@ -171,7 +171,7 @@ jobs:
           pass: ${{ secrets.SSH_PASSWORD}}
           # execute commands on ssh
           script: docker images --format "{{.ID}} {{.Repository}}:{{.Tag}}" | awk '/cteillet\/parcelle/ {print $1}' | grep -v "$(docker ps -q | xargs docker inspect --format '{{.Image}}')" | xargs docker rmi
-                
+
       - name: Nettoyage du dossier docker
         uses: cross-the-world/ssh-pipeline@v1.2.0
         with:
@@ -184,7 +184,7 @@ jobs:
           pass: ${{ secrets.SSH_PASSWORD}}
           # execute commands on ssh
           script: rm -rf /home/${{ secrets.SSH_USER}}/docker
-          
+
       - name: Docker Compose Down
         uses: cross-the-world/ssh-pipeline@v1.2.0
         with:
@@ -197,17 +197,17 @@ jobs:
           pass: ${{ secrets.SSH_PASSWORD}}
           # execute commands on ssh
           script: docker compose down -d
-      
+
       - name: Transfer docker images to VPS
         uses: Creepios/sftp-action@v1.0.5
         with:
-          # Host to login
+          # Host to log in
           host: ${{ secrets.SSH_HOST}}
-          # Port to login
+          # Port to log in
           port: ${{ secrets.SSH_PORT}}
-          # Username to login
+          # Username to log in
           username: ${{ secrets.SSH_USER}}
-           # Passwort to login
+           # Passwort to log in
           password: ${{ secrets.SSH_PASSWORD}}
           # Local file or directory
           localPath: parcelle_${{ github.run_number }}.tar
@@ -217,13 +217,13 @@ jobs:
       - name: Transfer docker repository to VPS
         uses: Creepios/sftp-action@v1.0.5
         with:
-          # Host to login
+          # Host to log in
           host: ${{ secrets.SSH_HOST}}
-          # Port to login
+          # Port to log in
           port: ${{ secrets.SSH_PORT}}
-          # Username to login
+          # Username to log in
           username: ${{ secrets.SSH_USER}}
-           # Passwort to login
+           # Passwort to log in
           password: ${{ secrets.SSH_PASSWORD}}
           # Local file or directory
           localPath: docker
@@ -233,19 +233,19 @@ jobs:
       - name: Transfer docker compose file to VPS
         uses: Creepios/sftp-action@v1.0.5
         with:
-          # Host to login
+          # Host to log in
           host: ${{ secrets.SSH_HOST}}
-          # Port to login
+          # Port to log in
           port: ${{ secrets.SSH_PORT}}
-          # Username to login
+          # Username to log in
           username: ${{ secrets.SSH_USER}}
-           # Passwort to login
+           # Passwort to log in
           password: ${{ secrets.SSH_PASSWORD}}
           # Local file or directory
           localPath: docker-compose.yml
           # Remote file or directory path (file or directories will be created)
           remotePath: docker-compose.yml
-          
+
       - name: Docker Compose Up
         uses: cross-the-world/ssh-pipeline@v1.2.0
         with:
@@ -258,7 +258,7 @@ jobs:
           pass: ${{ secrets.SSH_PASSWORD}}
           # execute commands on ssh
           script: docker compose -f /home/${{ secrets.SSH_USER}}/docker-compose.yml up -d
-    
+
       - name: SSH into VPS and load Docker image
         uses: cross-the-world/ssh-pipeline@v1.2.0
         with:

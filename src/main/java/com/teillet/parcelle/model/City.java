@@ -16,7 +16,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class City {
 	@Id
-	String inseeCityName;
+	String inseeCityCode;
 	String zipCode;
 	String cityName;
 	String countyName;
@@ -31,7 +31,7 @@ public class City {
 		if (this == o) return true;
 		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
 		City city = (City) o;
-		return getInseeCityName() != null && Objects.equals(getInseeCityName(), city.getInseeCityName());
+		return getInseeCityCode() != null && Objects.equals(getInseeCityCode(), city.getInseeCityCode());
 	}
 
 	@Override

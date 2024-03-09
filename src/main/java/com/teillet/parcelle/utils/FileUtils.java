@@ -23,7 +23,7 @@ public class FileUtils {
     }
 
     /**
-     *  Create a method that open gz file and return a BufferedReader
+     *  Create a method that opens gz file and return a BufferedReader
      *  @param file the file to open
      *  @return a BufferedReader to read the file
       */
@@ -39,7 +39,7 @@ public class FileUtils {
     }
 
     /**
-     * Create a method that open gz file and return a InputStream
+     * Create a method that opens gz file and return an InputStream
      * @param file the file to open
      * @return a InputStream to read the file
      */

@@ -13,7 +13,7 @@ public interface CityMapper {
 	CityMapper MAPPER = Mappers.getMapper(CityMapper.class);
 
 	@Mapping(target = "zipCode", source = "codePostal")
-	@Mapping(target = "inseeCityName", source = "inseeCom")
+	@Mapping(target = "inseeCityCode", source = "inseeCom")
 	@Mapping(target = "countyName", source = "codeDept")
 	@Mapping(target = "cityName", source = "nomDeLaCommune")
 	@Mapping(target = "plots", ignore = true)

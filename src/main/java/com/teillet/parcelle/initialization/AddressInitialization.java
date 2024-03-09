@@ -3,7 +3,10 @@ package com.teillet.parcelle.initialization;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teillet.parcelle.dto.AddressFileDto;
 import com.teillet.parcelle.mapper.AddressMapper;
+import com.teillet.parcelle.model.Address;
+import com.teillet.parcelle.model.City;
 import com.teillet.parcelle.repository.CityRepository;
+import com.teillet.parcelle.repository.PlotRepository;
 import com.teillet.parcelle.service.IAddressService;
 import com.teillet.parcelle.service.ISupabaseBucketService;
 import com.teillet.parcelle.service.ITemporaryFileService;
@@ -20,8 +23,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 
 @Order(3)
@@ -29,6 +34,7 @@ import java.util.concurrent.ExecutionException;
 @Slf4j
 @RequiredArgsConstructor
 public class AddressInitialization implements CommandLineRunner {
+    private final PlotRepository plotRepository;
     private final IAddressService addressService;
     private final CityRepository cityRepository;
     private final ITemporaryFileService temporaryFileService;
@@ -48,29 +54,37 @@ public class AddressInitialization implements CommandLineRunner {
             log.info("Il y a déjà des adresses enregistrées. L'import n'est pas nécessaire.");
             return;
         }
-
-        List<String> codePostauxValides = List.of(codePostalCodeInsee.split(delimiter));
         log.info("Début import adresses");
-        importAddress(fichierAdresse, codePostauxValides);
+        List<String> codePostauxValides = List.of(codePostalCodeInsee.split(delimiter));
+        Map<String, City> citiesByInseeCode = cityRepository.findAll().stream().collect(Collectors.toMap(City::getInseeCityCode, city -> city));
+
+        log.info("Téléchargement du fichier d'adresses");
+        String pathDownloadedFile = FileUtils.downloadFile(fichierAdresse, supabaseBucketService, temporaryFileService);
+
+        log.info("Lecture des adresses");
+        List<Address> addresses = readAddress(codePostauxValides, pathDownloadedFile, citiesByInseeCode);
+
+        log.info("Sauvegarde des adresses");
+        addressService.saveAddresses(addresses);
+
         log.info("Fin import adresses");
     }
 
-    private void importAddress(String filePath, List<String> codePostauxValides) throws IOException, ExecutionException, InterruptedException {
+    private List<Address> readAddress(List<String> codePostauxValides, String pathDownloadedFile,  Map<String, City> citiesByInseeCode) {
         ObjectMapper mapper = new ObjectMapper();
-        String pathDownloadedFile = FileUtils.downloadFile(filePath, supabaseBucketService, temporaryFileService);
-
         File file = new File(pathDownloadedFile);
         try (BufferedReader br = FileUtils.openGzFile(file)) {
-            br.lines()
+            return br.lines()
                     .parallel()
                     .map(line -> getAddressDto(mapper, line))
                     .filter(Objects::nonNull)
                     .filter(addressFileDto -> codePostauxValides.contains(addressFileDto.getCodeCommune()))
-                    .map(addressFileDto -> AddressMapper.MAPPER.toEntity(addressFileDto, cityRepository))
-                    .forEach(addressService::saveAddress);
+                    .map(addressFileDto -> AddressMapper.MAPPER.toEntity(addressFileDto, citiesByInseeCode, plotRepository))
+                    .toList();
         } catch (Exception e) {
             log.error("Erreur lors de l'import des adresses", e);
         }
+        return null;
     }
 
     private AddressFileDto getAddressDto(ObjectMapper mapper, String line) {

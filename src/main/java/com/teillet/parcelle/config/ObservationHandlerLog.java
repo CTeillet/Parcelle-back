@@ -24,12 +24,5 @@ public class ObservationHandlerLog implements ObservationHandler<Observation.Con
 	public boolean supportsContext(@NotNull Observation.Context context) {
 		return true;
 	}
-//
-//	private String getUserTypeFromContext(Observation.Context context) {
-//		return StreamSupport.stream(context.getLowCardinalityKeyValues().spliterator(), false)
-//				.filter(keyValue -> "userType".equals(keyValue.getKey()))
-//				.map(KeyValue::getValue)
-//				.findFirst()
-//				.orElse("UNKNOWN");
-//	}
+
 }

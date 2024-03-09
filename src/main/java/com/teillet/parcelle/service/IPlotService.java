@@ -17,11 +17,7 @@ public interface IPlotService {
     @Async
     CompletableFuture<Plot> getPlotById(String id);
 
-    List<Plot> recuperationParcellesNonLieesAdresse();
-
-    void savePlot(Plot plot);
-
-    Long nombreParcelleLieesAdresse();
+    void savePlots(List<Plot> plots);
 
     CompletableFuture<List<Plot>> recuperationParcellesParDestinationPrincipaleEtSupprime(String destinationPrincipale, boolean supprimer);
 }

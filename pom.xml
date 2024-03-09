@@ -18,6 +18,7 @@
         <geotools.version>30.2</geotools.version>
         <hibernate.version>6.4.4.Final</hibernate.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
+        <opentelemetry.version>1.36.0</opentelemetry.version>
     </properties>
 
     <!--    Add a repository -->
@@ -176,24 +177,24 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>io.opentelemetry</groupId>
-            <artifactId>opentelemetry-api</artifactId>
-            <version>1.31.0</version>
-        </dependency>
-        <dependency>
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-tracing-bridge-otel</artifactId>
-            <version>1.1.6</version>
+            <version>1.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.opentelemetry</groupId>
+            <artifactId>opentelemetry-api</artifactId>
+            <version>${opentelemetry.version}</version>
         </dependency>
         <dependency>
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-exporter-otlp</artifactId>
-            <version>1.31.0</version>
+            <version>${opentelemetry.version}</version>
         </dependency>
         <dependency>
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-exporter-common</artifactId>
-            <version>1.31.0</version>
+            <version>${opentelemetry.version}</version>
         </dependency>
     </dependencies>
 

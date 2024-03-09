@@ -9,7 +9,6 @@ import com.teillet.parcelle.service.ISupabaseBucketService;
 import com.teillet.parcelle.service.ITemporaryFileService;
 import com.teillet.parcelle.utils.FileUtils;
 import io.micrometer.observation.annotation.Observed;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,7 +21,7 @@ import java.util.List;
 @Component
 @Order(1)
 @RequiredArgsConstructor
-@Transactional
+//@Transactional
 @Slf4j
 public class CityInitialization implements CommandLineRunner {
 	private final ITownService townService;
@@ -50,10 +49,10 @@ public class CityInitialization implements CommandLineRunner {
 		//Filter les communeDtos pour ne garder que celles qui concernent le département choisi
 		List<CityFileDto> cityFileDtosFiltre = cityFileDtos.parallelStream().filter(cityFileDto -> cityFileDto.getNomDept().equals(departement)).toList();
 		//Conversion des communeDtos en communes
-		List<City> towns = CityMapper.MAPPER.toEntity(cityFileDtosFiltre);
-		log.info("Nombre de communes : " + towns.size());
+		List<City> cities = CityMapper.MAPPER.toEntity(cityFileDtosFiltre);
+		log.info("Nombre de communes : " + cities.size());
 		//Enregistrement des communes
-		List<City> savedTowns = townService.saveTowns(towns);
+		List<City> savedTowns = townService.saveTowns(cities);
 		log.info("Nombre de communes sauvegardées : " + savedTowns.size());
 	}
 

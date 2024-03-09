@@ -29,7 +29,7 @@ extensions:
 service:
   extensions: [health_check, pprof, zpages]
   pipelines:
-    # for now we only interested about metrics...
+    # for now, we only interested about metrics...
     metrics:
       receivers: [otlp]
       processors: [batch]
@@ -37,7 +37,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp]  # name here should match the exporter name for tempo which is otlp
+      exporters: [otlp]  # the name here should match the exporter name for tempo which is otlp
 #    logs:
 #      receivers: [otlp]
 #      exporters: [loki]

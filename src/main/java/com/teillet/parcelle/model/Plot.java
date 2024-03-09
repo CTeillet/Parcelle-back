@@ -7,7 +7,9 @@ import lombok.ToString;
 import org.hibernate.Hibernate;
 import org.locationtech.jts.geom.Polygon;
 
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -18,7 +20,6 @@ import java.util.Objects;
 		@Index(name = "plot_pkey", columnList = "id", unique = true),
 		@Index(name = "plot_insee_city_name_idx", columnList = "insee_city_name"),
 		@Index(name = "plot_block_id_idx", columnList = "block_id"),
-		@Index(name = "plot_address_id_idx", columnList = "address_id"),
 		@Index(name = "plot_deleted_idx", columnList = "deleted")
 })
 public class Plot {
@@ -44,9 +45,9 @@ public class Plot {
 	@Column(name = "deleted", nullable = false, columnDefinition = "boolean default false")
 	private Boolean deleted;
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "address_id")
-	private Address address;
+	@ToString.Exclude
+	@ManyToMany(mappedBy = "plots")
+	private Set<Address> addresses = new LinkedHashSet<>();
 
 	@Override
 	public boolean equals(Object o) {

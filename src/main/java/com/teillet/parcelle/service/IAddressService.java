@@ -7,9 +7,8 @@ import java.util.List;
 public interface IAddressService {
 	Long addressNumber();
 
-	void saveAddress(Address address);
-
-	Address getAddressByPlotId(String id);
-
 	List<String> getAddressTypes();
+
+	void saveAddresses(List<Address> addresses);
+
 }
