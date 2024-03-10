@@ -16,6 +16,7 @@ public interface PlotRepository extends JpaRepository<Plot, String> {
 		SELECT p
 		FROM Plot p
 		LEFT JOIN FETCH p.city
+		LEFT JOIN FETCH p.addresses
 		WHERE p.deleted = false
 	""")
 	List<Plot> findByDeletedFalse();
