@@ -196,7 +196,7 @@ jobs:
           # ssh remote password
           pass: ${{ secrets.SSH_PASSWORD}}
           # execute commands on ssh
-          script: docker compose down -d
+          script: docker compose down
 
       - name: Transfer docker images to VPS
         uses: Creepios/sftp-action@v1.0.5
