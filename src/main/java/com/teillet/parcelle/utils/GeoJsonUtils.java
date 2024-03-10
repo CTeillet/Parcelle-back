@@ -1,16 +1,26 @@
 package com.teillet.parcelle.utils;
 
 import com.teillet.parcelle.dto.PlotFileDto;
+import com.teillet.parcelle.model.Block;
+import com.teillet.parcelle.model.Plot;
 import org.geotools.api.feature.simple.SimpleFeature;
+import org.geotools.api.feature.simple.SimpleFeatureType;
+import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geojson.geom.GeometryJSON;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -80,5 +90,48 @@ public class GeoJsonUtils {
 
     private static Polygon getPolygonAttribute(SimpleFeature feature, String attributeName) {
         return (Polygon) feature.getAttribute(attributeName);
+    }
+
+    public static SimpleFeatureType createPlotFeatureType() {
+        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        builder.setName("Plot");
+        builder.add("id", String.class);
+        builder.add("area", Integer.class);
+        builder.add("town", String.class);
+        builder.add("geometry", Geometry.class);
+        builder.add("addresses", Set.class);
+        return builder.buildFeatureType();
+    }
+
+    public static SimpleFeatureType createBlockFeatureType() {
+        SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+        builder.setName("Block");
+        builder.add("id", Long.class);
+        builder.add("geometry", Geometry.class);
+        return builder.buildFeatureType();
+    }
+
+    public static SimpleFeature createPlotSimpleFeature(SimpleFeatureBuilder featureBuilder, Plot plot) {
+        featureBuilder.add(plot.getId());
+        featureBuilder.add(plot.getSurface());
+        featureBuilder.add(plot.getCity().getCityName());
+        featureBuilder.add(plot.getGeom());
+        featureBuilder.add(plot.getAddresses());
+        return featureBuilder.buildFeature(null);
+    }
+
+    public static SimpleFeature createBlockSimpleFeature(SimpleFeatureBuilder featureBuilder, Block block) {
+        featureBuilder.add(block.getId());
+        featureBuilder.add(block.getGeom());
+        return featureBuilder.buildFeature(null);
+    }
+
+    public static <T>SimpleFeatureCollection createFeatureCollection(List<T> elements, SimpleFeatureType featureType, BiFunction<SimpleFeatureBuilder, T, SimpleFeature > createSimpleFeature) {
+        SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(featureType);
+
+        return elements
+                .stream()
+                .map(element -> createSimpleFeature.apply(featureBuilder, element))
+                .collect(() -> new ListFeatureCollection(featureType), ListFeatureCollection::add, ListFeatureCollection::addAll);
     }
 }

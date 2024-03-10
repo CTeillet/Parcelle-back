@@ -34,7 +34,7 @@ public interface PlotRepository extends JpaRepository<Plot, String> {
 				FROM plot
 				WHERE deleted = false
 			) subquery
-			GROUP BY cluster_id, geom
+			GROUP BY cluster_id
 			"""
 	)
 	List<Object[]> getPlotClustersQuery();
@@ -44,7 +44,6 @@ public interface PlotRepository extends JpaRepository<Plot, String> {
 			SELECT array_agg(id) AS intersecting_ids, ST_ConcaveHull(ST_Union(plot.geom), 0.5) AS geometry
 			FROM plot
 			WHERE id IN ?1
-			GROUP BY plot.geom
 			"""
 	)
 	List<Object[]> getPlotCluster(List<String> plotIds);

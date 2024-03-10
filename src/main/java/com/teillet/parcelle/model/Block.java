@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.Hibernate;
+import org.locationtech.jts.geom.Polygon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,9 @@ public class Block {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@Column(name = "geom", columnDefinition = "geometry(Polygon, 4326)")
+	private Polygon geom;
 
 	@ManyToOne
 	@JoinColumn(name = "territory_id")

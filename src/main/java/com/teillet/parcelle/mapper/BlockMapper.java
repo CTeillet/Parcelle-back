@@ -21,6 +21,7 @@ public interface BlockMapper {
 	@Mapping(target = "territory", ignore = true)
 	@Mapping(target = "plots", source = "intersectingIds")
 	@Mapping(target = "id", ignore = true)
+	@Mapping(target = "geom", source = "geom")
 	Block plotClusterDtoToEntity(PlotClusterDto plotClusterDto, @Context PlotRepository plotRepository);
 
 	@Mapping(target = "territory", ignore = true)

@@ -49,8 +49,7 @@ public class PlotClusterUtils {
 
     private static SimpleFeature createSimpleFeature(SimpleFeatureBuilder featureBuilder, PlotClusterDto plotClusters) {
         featureBuilder.add(plotClusters.getIntersectingIds());
-        featureBuilder.add(plotClusters.getGeometry());
-
+        featureBuilder.add(plotClusters.getGeom());
         return featureBuilder.buildFeature(null);
     }
 

@@ -3,7 +3,7 @@ package com.teillet.parcelle.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Polygon;
 
 import java.util.List;
 
@@ -12,5 +12,5 @@ import java.util.List;
 @AllArgsConstructor
 public class PlotClusterDto {
 	private List<String> intersectingIds;
-	private Geometry geometry;
+	private Polygon geom;
 }
