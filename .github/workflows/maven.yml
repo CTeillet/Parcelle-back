@@ -116,22 +116,13 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-
-      - name: Build Docker image
-        uses: docker/build-push-action@v5
+        
+       # https://github.com/marketplace/actions/push-to-ghcr
+      - name: Build and publish a Docker image for ${{ github.repository }}
+        uses: macbre/push-to-ghcr@master
         with:
-          push: false
-          tags: cteillet/parcelle:${{ github.run_number }}
-          outputs: type=docker,dest=parcelle_${{ github.run_number }}.tar
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: docker-files
-          path: |
-            docker
-            parcelle_${{ github.run_number }}.tar
-            docker-compose.yml
+          image_name: ${{ github.repository }}  # it will be lowercased internally
+          github_token: ${{ secrets.GITHUB_TOKEN }}
 
   deploy-to-vps:
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -140,25 +131,6 @@ jobs:
       - docker-build
 
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: docker-files
-          path: .
-
-      - name: Nettoyage du dossier docker-images
-        uses: cross-the-world/ssh-pipeline@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST}}
-          # ssh remote port
-          port: ${{ secrets.SSH_PORT}}
-          # ssh remote user
-          user: ${{ secrets.SSH_USER}}
-          # ssh remote password
-          pass: ${{ secrets.SSH_PASSWORD}}
-          # execute commands on ssh
-          script: rm -rf /home/${{ secrets.SSH_USER}}/docker-images/*
-
       - name: Nettoyage des anciennes images
         uses: cross-the-world/ssh-pipeline@v1.2.0
         with:
@@ -198,22 +170,6 @@ jobs:
           # execute commands on ssh
           script: docker compose down
 
-      - name: Transfer docker images to VPS
-        uses: Creepios/sftp-action@v1.0.5
-        with:
-          # Host to log in
-          host: ${{ secrets.SSH_HOST}}
-          # Port to log in
-          port: ${{ secrets.SSH_PORT}}
-          # Username to log in
-          username: ${{ secrets.SSH_USER}}
-           # Passwort to log in
-          password: ${{ secrets.SSH_PASSWORD}}
-          # Local file or directory
-          localPath: parcelle_${{ github.run_number }}.tar
-          # Remote file or directory path (file or directories will be created)
-          remotePath: docker-images/
-
       - name: Transfer docker repository to VPS
         uses: Creepios/sftp-action@v1.0.5
         with:
@@ -230,22 +186,6 @@ jobs:
           # Remote file or directory path (file or directories will be created)
           remotePath: docker/
 
-      - name: Transfer docker compose file to VPS
-        uses: Creepios/sftp-action@v1.0.5
-        with:
-          # Host to log in
-          host: ${{ secrets.SSH_HOST}}
-          # Port to log in
-          port: ${{ secrets.SSH_PORT}}
-          # Username to log in
-          username: ${{ secrets.SSH_USER}}
-           # Passwort to log in
-          password: ${{ secrets.SSH_PASSWORD}}
-          # Local file or directory
-          localPath: docker-compose.yml
-          # Remote file or directory path (file or directories will be created)
-          remotePath: docker-compose.yml
-
       - name: Docker Compose Up
         uses: cross-the-world/ssh-pipeline@v1.2.0
         with:
@@ -258,32 +198,6 @@ jobs:
           pass: ${{ secrets.SSH_PASSWORD}}
           # execute commands on ssh
           script: docker compose -f /home/${{ secrets.SSH_USER}}/docker-compose.yml up -d
-
-      - name: SSH into VPS and load Docker image
-        uses: cross-the-world/ssh-pipeline@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST}}
-          # ssh remote port
-          port: ${{ secrets.SSH_PORT}}
-          # ssh remote user
-          user: ${{ secrets.SSH_USER}}
-          # ssh remote password
-          pass: ${{ secrets.SSH_PASSWORD}}
-          # execute commands on ssh
-          script: docker load -i /home/${{ secrets.SSH_USER}}/docker-images/parcelle_${{ github.run_number }}.tar
-
-      - name: SSH into VPS and restart Docker container
-        uses: cross-the-world/ssh-pipeline@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST}}
-          # ssh remote port
-          port: ${{ secrets.SSH_PORT}}
-          # ssh remote user
-          user: ${{ secrets.SSH_USER}}
-          # ssh remote password
-          pass: ${{ secrets.SSH_PASSWORD}}
-          # execute commands on ssh
-          script: docker stop parcelle || true && docker rm parcelle || true && docker run -d -p 8080:8080 --name parcelle -e JASYPT_PASSWORD='${{ secrets.JASYPT_PASSWORD}}' -v /app/logs:/home/deploiement-parcelle/logs cteillet/parcelle:${{ github.run_number }}
 
       - name: Cleanup
         run: |
