@@ -18,6 +18,8 @@ RUN addgroup -g 1001 -S parcellegroup && \
 
 COPY --from=build /project/target/*.jar plot.jar
 
+COPY keystore.p12 /app/keystore.p12
+
 RUN chown plot:parcellegroup plot.jar && \
     chmod 755 plot.jar
 
