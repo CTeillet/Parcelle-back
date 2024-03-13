@@ -1,5 +1,18 @@
 version: '3'
 services:
+# Create a container from the command line :
+# docker run -d -p 8080:8080 --name parcelle -e JASYPT_PASSWORD='${{ secrets.JASYPT_PASSWORD}}' -v /app/logs:/home/deploiement-parcelle/logs cteillet/parcelle:${{ github.run_number }}
+  parcelle:
+    container_name: parcelle
+    image: ghcr.io/cteillet/parcelle-back:latest
+    restart: always
+    ports:
+    - "8080:8080"
+    environment:
+    - JASYPT_PASSWORD=${{ secrets.JASYPT_PASSWORD}}
+    volumes:
+    - /app/logs:/home/deploiement-parcelle/logs
+
   otel-collector:
     container_name: otel-collector
     image: otel/opentelemetry-collector-contrib:0.82.0
