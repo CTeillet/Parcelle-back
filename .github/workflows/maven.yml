@@ -139,6 +139,11 @@ jobs:
       - docker-build
 
     steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: docker-files
+          path: .
       - name: Nettoyage des anciennes images
         uses: cross-the-world/ssh-pipeline@v1.2.0
         with:
