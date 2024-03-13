@@ -196,6 +196,22 @@ jobs:
           # Remote file or directory path (file or directories will be created)
           remotePath: docker/
 
+      - name: Transfer docker-compose.yml to VPS
+        uses: Creepios/sftp-action@v1.0.5
+        with:
+          # Host to log in
+          host: ${{ secrets.SSH_HOST}}
+          # Port to log in
+          port: ${{ secrets.SSH_PORT}}
+          # Username to log in
+          username: ${{ secrets.SSH_USER}}
+          # Passwort to log in
+          password: ${{ secrets.SSH_PASSWORD}}
+          # Local file or directory
+          localPath: docker-compose.yml
+          # Remote file or directory path (file or directories will be created)
+          remotePath: docker-compose.yml
+
       - name: Docker Compose Up
         uses: cross-the-world/ssh-pipeline@v1.2.0
         with:
