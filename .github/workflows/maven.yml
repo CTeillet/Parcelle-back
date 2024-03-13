@@ -124,6 +124,14 @@ jobs:
           image_name: ${{ github.repository }}  # it will be lowercased internally
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: docker-files
+          path: |
+            docker
+            docker-compose.yml
+
   deploy-to-vps:
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
