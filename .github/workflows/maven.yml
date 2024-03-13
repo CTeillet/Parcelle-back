@@ -225,7 +225,7 @@ jobs:
           # ssh remote password
           pass: ${{ secrets.SSH_PASSWORD}}
           # execute commands on ssh
-          script: docker compose -f /home/${{ secrets.SSH_USER}}/docker-compose.yml up -d
+          script: docker login ghcr.io -u cteillet -p ${{ secrets.GITHUB_TOKEN }} && docker compose -f /home/${{ secrets.SSH_USER}}/docker-compose.yml up -d
 
       - name: Cleanup
         run: |
