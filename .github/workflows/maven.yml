@@ -226,7 +226,7 @@ jobs:
           # ssh remote password
           pass: ${{ secrets.SSH_PASSWORD}}
           # execute commands on ssh
-          script: docker rmi parcelle-back
+          script: docker rmi ghcr.io/cteillet/parcelle-back
 
       - name: Docker Compose Up
         uses: cross-the-world/ssh-pipeline@v1.2.0
