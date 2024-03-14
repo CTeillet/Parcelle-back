@@ -70,6 +70,7 @@ public class SecurityConfig {
 			// Récupère le JWT de l'en-tête Authorization
 			String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 			if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+				log.info("En-tête Authorization: {}", authorizationHeader);
 				String jwt = authorizationHeader.substring(7); // Récupère uniquement le JWT sans le préfixe "Bearer "
 				log.info("JWT reçu: {}", jwt);
 			} else {
