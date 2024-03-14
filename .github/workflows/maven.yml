@@ -131,6 +131,7 @@ jobs:
             docker
             docker-compose.yml
 
+
   deploy-to-vps:
     if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
@@ -143,18 +144,18 @@ jobs:
         with:
           name: docker-files
           path: .
-      - name: Nettoyage des anciennes images
-        uses: cross-the-world/ssh-pipeline@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST}}
-          # ssh remote port
-          port: ${{ secrets.SSH_PORT}}
-          # ssh remote user
-          user: ${{ secrets.SSH_USER}}
-          # ssh remote password
-          pass: ${{ secrets.SSH_PASSWORD}}
-          # execute commands on ssh
-          script: docker images --format "{{.ID}} {{.Repository}}:{{.Tag}}" | awk '/cteillet\/parcelle/ {print $1}' | grep -v "$(docker ps -q | xargs docker inspect --format '{{.Image}}')" | xargs docker rmi
+#      - name: Nettoyage des anciennes images
+#        uses: cross-the-world/ssh-pipeline@v1.2.0
+#        with:
+#          host: ${{ secrets.SSH_HOST}}
+#          # ssh remote port
+#          port: ${{ secrets.SSH_PORT}}
+#          # ssh remote user
+#          user: ${{ secrets.SSH_USER}}
+#          # ssh remote password
+#          pass: ${{ secrets.SSH_PASSWORD}}
+#          # execute commands on ssh
+#          script: docker images --format "{{.ID}} {{.Repository}}:{{.Tag}}" | awk '/cteillet\/parcelle/ {print $1}' | grep -v "$(docker ps -q | xargs docker inspect --format '{{.Image}}')" | xargs docker rmi
 
       - name: Nettoyage du dossier docker
         uses: cross-the-world/ssh-pipeline@v1.2.0
@@ -213,6 +214,19 @@ jobs:
           localPath: docker-compose.yml
           # Remote file or directory path (file or directories will be created)
           remotePath: docker-compose.yml
+
+      - name: Suppression de l'ancienne image
+        uses: cross-the-world/ssh-pipeline@v1.2.0
+        with:
+          host: ${{ secrets.SSH_HOST}}
+          # ssh remote port
+          port: ${{ secrets.SSH_PORT}}
+          # ssh remote user
+          user: ${{ secrets.SSH_USER}}
+          # ssh remote password
+          pass: ${{ secrets.SSH_PASSWORD}}
+          # execute commands on ssh
+          script: docker rmi parcelle-back
 
       - name: Docker Compose Up
         uses: cross-the-world/ssh-pipeline@v1.2.0
