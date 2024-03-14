@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -66,15 +65,6 @@ public class SecurityConfig {
 				throws ServletException, IOException {
 			// Affiche la requête entrante
 			log.info("Requête reçue: {} - {}", request.getRemoteAddr(), request.getRequestURI());
-
-			// Récupère le JWT de l'en-tête Authorization
-			String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-			if (authorizationHeader != null) {
-				// Récupère uniquement le JWT sans le préfixe "Bearer "
-				log.info("JWT reçu: {}", authorizationHeader);
-			} else {
-				log.warn("Aucun jeton JWT trouvé dans l'en-tête Authorization");
-			}
 
 			// Continue le traitement de la requête
 			filterChain.doFilter(request, response);
