@@ -14,7 +14,7 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
 RUN addgroup -g 1001 -S parcellegroup && \
-    adduser -S plot -u 1001 -G parcellegroup \
+    adduser -S plot -u 1001 -G parcellegroup &&\
     mkdir -p logs
 
 COPY --from=build /project/target/*.jar plot.jar
