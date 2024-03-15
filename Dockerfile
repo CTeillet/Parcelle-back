@@ -14,7 +14,8 @@ FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 
 RUN addgroup -g 1001 -S parcellegroup && \
-    adduser -S plot -u 1001 -G parcellegroup
+    adduser -S plot -u 1001 -G parcellegroup \
+    mkdir -p logs
 
 COPY --from=build /project/target/*.jar plot.jar
 
@@ -22,8 +23,6 @@ COPY keystore.p12 /app/keystore.p12
 
 RUN chown plot:parcellegroup plot.jar && \
     chmod 755 plot.jar
-
-MKDIR /app/logs
 
 USER plot
 
