@@ -23,6 +23,8 @@ COPY keystore.p12 /app/keystore.p12
 RUN chown plot:parcellegroup plot.jar && \
     chmod 755 plot.jar
 
+MKDIR /app/logs
+
 USER plot
 
 EXPOSE 8080
