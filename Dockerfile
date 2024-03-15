@@ -21,7 +21,9 @@ COPY --from=build /project/target/*.jar plot.jar
 
 COPY keystore.p12 /app/keystore.p12
 
-RUN chown plot:parcellegroup plot.jar && \
+RUN chown -R plot:parcellegroup logs && \
+    chmod -R 755 logs && \
+    chown plot:parcellegroup plot.jar && \
     chmod 755 plot.jar
 
 USER plot
