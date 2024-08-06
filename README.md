@@ -10,4 +10,6 @@ Dans la partie back, on va avoir l'intégration entre un back en Spring Boot et 
 
 Ensuite, on peut voir l'intégration de OpenTelemtry, Grafana et Tempo pour pouvoir surveiller l'application en temps réel.
 
+Une gestion des utilisateurs a été mise en place grâce à Auth0
+
 Et grâce aux outils de GitHub Actions, une CI/CD est mise en place pour avoir un déploiement automatique vers un VPS
