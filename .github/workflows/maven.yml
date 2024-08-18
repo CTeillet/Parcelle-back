@@ -81,7 +81,7 @@ jobs:
         run: mvn checkstyle:check
 
       - name: Archive Checkstyle XML Report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: checkstyle-report
           path: target/site/checkstyle-result.xml
@@ -111,7 +111,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -124,7 +124,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: docker-files
           path: |
@@ -140,7 +140,7 @@ jobs:
 
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: docker-files
           path: .
