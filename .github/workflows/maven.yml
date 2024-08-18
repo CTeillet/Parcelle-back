@@ -192,7 +192,7 @@ jobs:
           username: ${{ secrets.SSH_USER}}
           password: ${{ secrets.SSH_PASSWORD}}
           local_path: docker-compose.yml
-          remote_path: .
+          remote_path: ./docker-compose.yml
           delete_remote_files: true
 
       - name: Transfer docker repository to VPS
