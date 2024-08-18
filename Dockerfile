@@ -1,5 +1,5 @@
 # Stage 1: Build Stage
-FROM maven:3.8.7-eclipse-temurin-17-alpine AS build
+FROM maven:3.9.8-eclipse-temurin-21-alpine AS build
 
 WORKDIR /project
 
@@ -9,7 +9,7 @@ RUN mvn clean package -DskipTests && \
     rm -rf /root/.m2
 
 # Stage 2: Run Stage
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
