@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.3</version>
+        <version>3.3.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.teillet</groupId>
@@ -14,7 +14,7 @@
     <name>Parcelle</name>
     <description>Parcelle</description>
     <properties>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
         <geotools.version>30.2</geotools.version>
         <hibernate.version>6.4.4.Final</hibernate.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
@@ -108,7 +108,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <version>1.18.30</version> <!-- Added -->
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -229,7 +229,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.26</version>
+                            <version>1.18.30</version>
                         </path>
                         <path>
                             <groupId>org.projectlombok</groupId>
