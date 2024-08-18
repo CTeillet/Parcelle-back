@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "loki.url",
+      "type": "java.lang.String",
+      "description": "Url pour loki, la valeur est utilisé dans le fichier logback-spring.yml."
+  }
+] }
