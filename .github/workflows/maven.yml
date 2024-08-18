@@ -202,7 +202,7 @@ jobs:
           port: ${{ secrets.SSH_PORT}}
           username: ${{ secrets.SSH_USER}}
           password: ${{ secrets.SSH_PASSWORD}}
-          local_path: docker/
+          local_path: docker/*
           remote_path: docker/
 
       - name: Suppression de l'ancienne image
