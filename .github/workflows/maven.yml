@@ -192,7 +192,6 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD}}
           local_path: docker
           remote_path: docker/
-          sftp_only: true
 
       - name: Transfer docker-compose.yml to VPS
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
@@ -203,7 +202,6 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD}}
           local_path: docker-compose.yml
           remote_path: docker-compose.yml
-          sftp_only: true
 
       - name: Suppression de l'ancienne image
         uses: cross-the-world/ssh-pipeline@v1.2.0
