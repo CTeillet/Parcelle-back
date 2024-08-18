@@ -183,16 +183,6 @@ jobs:
           # execute commands on ssh
           script: docker compose down
 
-      - name: Transfer docker repository to VPS
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
-        with:
-          server: ${{ secrets.SSH_HOST}}
-          port: ${{ secrets.SSH_PORT}}
-          username: ${{ secrets.SSH_USER}}
-          password: ${{ secrets.SSH_PASSWORD}}
-          local_path: docker
-          remote_path: docker/
-
       - name: Transfer docker-compose.yml to VPS
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
@@ -202,6 +192,16 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD}}
           local_path: docker-compose.yml
           remote_path: docker-compose.yml
+
+      - name: Transfer docker repository to VPS
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          server: ${{ secrets.SSH_HOST}}
+          port: ${{ secrets.SSH_PORT}}
+          username: ${{ secrets.SSH_USER}}
+          password: ${{ secrets.SSH_PASSWORD}}
+          local_path: docker/
+          remote_path: docker/
 
       - name: Suppression de l'ancienne image
         uses: cross-the-world/ssh-pipeline@v1.2.0
