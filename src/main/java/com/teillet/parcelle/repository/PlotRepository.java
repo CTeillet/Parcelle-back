@@ -1,6 +1,7 @@
 package com.teillet.parcelle.repository;
 
 import com.teillet.parcelle.model.Plot;
+import io.micrometer.observation.annotation.Observed;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +12,9 @@ import java.util.List;
 
 @Repository
 public interface PlotRepository extends JpaRepository<Plot, String> {
+	@Observed(name = "plot.getPlotsByMainDestinationAndDeleted")
 	List<Plot> findByAddresses_MainDestinationAndDeleted(String mainDestination, Boolean deleted);
+
 	@Query("""
 		SELECT p
 		FROM Plot p
@@ -19,11 +22,13 @@ public interface PlotRepository extends JpaRepository<Plot, String> {
 		LEFT JOIN FETCH p.addresses
 		WHERE p.deleted = false
 	""")
+	@Observed(name = "plot.getNonDeletedPlots")
 	List<Plot> findByDeletedFalse();
 
 	//@Transactional
 	@Modifying
 	@Query("update Plot p set p.deleted = true where p.id in ?1")
+	@Observed(name = "plot.deletePlots")
 	int updateDeletedByIdIn(Collection<String> ids);
 
 	@Query(nativeQuery = true, value =
@@ -46,6 +51,7 @@ public interface PlotRepository extends JpaRepository<Plot, String> {
 			WHERE id IN ?1
 			"""
 	)
+	@Observed
 	List<Object[]> getPlotCluster(List<String> plotIds);
 
 }

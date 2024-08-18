@@ -17,23 +17,25 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @AllArgsConstructor
 @Slf4j
-@RequestMapping("/api/private/parcelle")
+@RequestMapping("/api/private/plot")
 public class PlotController {
-    private final IPlotService parcelleService;
+    private final IPlotService plotService;
 
     @GetMapping
-    @Observed(name = "plot.getParcelle")
-    public ResponseEntity<String> getParcelle() throws IOException, ExecutionException, InterruptedException {
-        CompletableFuture<List<Plot>> parcelles = parcelleService.getNonDeletedPlots();
-        String string = PlotUtils.plotsToGeoJson(parcelles.get());
+    @Observed(name = "plot.getPlots")
+    public ResponseEntity<String> getPlots() throws IOException, ExecutionException, InterruptedException {
+        log.info("Récupération des parcelles");
+        CompletableFuture<List<Plot>> plots = plotService.getNonDeletedPlots();
+        String string = PlotUtils.plotsToGeoJson(plots.get());
         return ResponseEntity.ok(string);
     }
 
-    //Delete a list of parcelles by id of String
+    //Delete a list of plots by id of String
     @DeleteMapping
-    public ResponseEntity<String> deleteParcelles(@RequestBody List<String> ids) {
-        log.info("Suppression des parcelles " + ids);
-        if (parcelleService.deletePlots(ids)) {
+    @Observed(name = "plot.deletePlots")
+    public ResponseEntity<String> deletePlots(@RequestBody List<String> ids) {
+        log.info("Suppression des parcelles {}", ids);
+        if (plotService.deletePlots(ids)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.badRequest().build();
@@ -42,19 +44,21 @@ public class PlotController {
 
     //Get one parcelle
     @GetMapping("/{id}")
-    public ResponseEntity<String> getParcelleById(@PathVariable String id) throws IOException, ExecutionException, InterruptedException {
-        log.info("Récupération de la parcelle " + id);
-        CompletableFuture<Plot> parcelle = parcelleService.getPlotById(id);
-        String string = PlotUtils.plotToGeoJson(parcelle.get());
+    @Observed(name = "plot.getPlotById")
+    public ResponseEntity<String> getPlotById(@PathVariable String id) throws IOException, ExecutionException, InterruptedException {
+        log.info("Récupération de la parcelle {}", id);
+        CompletableFuture<Plot> plot = plotService.getPlotById(id);
+        String string = PlotUtils.plotToGeoJson(plot.get());
         return ResponseEntity.ok(string);
     }
 
     // Récupération des parcelles qui ont comme adresse la valeur destinationPrincipale en param et la valeur donnée pour supprimer
     @GetMapping("/{destinationPrincipale}/{supprimer}")
-    public ResponseEntity<String> getParcelleByDestinationPrincipaleAndSupprime(@PathVariable String destinationPrincipale, @PathVariable boolean supprimer) throws IOException, ExecutionException, InterruptedException {
-        log.info("Récupération des parcelles avec destinationPrincipale = " + destinationPrincipale + " et supprimer = " + supprimer);
-        CompletableFuture<List<Plot>> parcelles = parcelleService.recuperationParcellesParDestinationPrincipaleEtSupprime(destinationPrincipale, supprimer);
-        String string = PlotUtils.plotsToGeoJson(parcelles.get());
+    @Observed(name = "plot.getPlotsByMainDestinationAndDeleted")
+    public ResponseEntity<String> getPlotsByMainDestinationAndDeleted(@PathVariable String destinationPrincipale, @PathVariable boolean supprimer) throws IOException, ExecutionException, InterruptedException {
+        log.info("Récupération des parcelles avec destinationPrincipale = {} et supprimer = {}", destinationPrincipale, supprimer);
+        CompletableFuture<List<Plot>> plots = plotService.getPlotsByMainDestinationAndDeleted(destinationPrincipale, supprimer);
+        String string = PlotUtils.plotsToGeoJson(plots.get());
         return ResponseEntity.ok(string);
     }
 

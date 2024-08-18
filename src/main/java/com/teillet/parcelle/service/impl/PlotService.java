@@ -23,11 +23,12 @@ public class PlotService implements IPlotService {
     }
 
 	@Override
+    @Observed(name = "plot.deletePlots")
     public boolean deletePlots(List<String> ids) {
-        log.info("Nombre de parcelles à supprimer : " + ids.size());
-        int nbParcellesSupprimees = plotRepository.updateDeletedByIdIn(ids);
-        log.info("Nombre de parcelles supprimées : " + nbParcellesSupprimees);
-        return nbParcellesSupprimees == ids.size();
+        log.info("Nombre de parcelles à supprimer : {}", ids.size());
+        int nbDeletedPlots = plotRepository.updateDeletedByIdIn(ids);
+        log.info("Nombre de parcelles supprimées : {}", nbDeletedPlots);
+        return nbDeletedPlots == ids.size();
     }
 
     @Override
@@ -37,6 +38,7 @@ public class PlotService implements IPlotService {
     }
 
     @Override
+    @Observed(name = "plot.getPlotById")
     public CompletableFuture<Plot> getPlotById(String id) {
         return CompletableFuture.completedFuture(plotRepository.findById(id).orElse(null));
     }
@@ -44,13 +46,14 @@ public class PlotService implements IPlotService {
     @Override
     @Observed(name = "plot.savePlots")
     public void savePlots(List<Plot> plots) {
-        log.info("Enregistrement de " + plots.size() + " parcelles");
+        log.info("Enregistrement de {} parcelles", plots.size());
         plotRepository.saveAll(plots);
-        log.info("Fin enregistrement de " + plots.size() + " parcelles");
+        log.info("Fin enregistrement de {} parcelles", plots.size());
     }
 
     @Override
-    public CompletableFuture<List<Plot>> recuperationParcellesParDestinationPrincipaleEtSupprime(String destinationPrincipale, boolean supprimer) {
+    @Observed(name = "plot.getPlotsByMainDestinationAndDeleted")
+    public CompletableFuture<List<Plot>> getPlotsByMainDestinationAndDeleted(String destinationPrincipale, boolean supprimer) {
         log.info("Récupération des parcelles avec destinationPrincipale = {} et supprimer = {}", destinationPrincipale, supprimer);
         return CompletableFuture.completedFuture(plotRepository.findByAddresses_MainDestinationAndDeleted(destinationPrincipale, supprimer));
     }

@@ -19,5 +19,5 @@ public interface IPlotService {
 
     void savePlots(List<Plot> plots);
 
-    CompletableFuture<List<Plot>> recuperationParcellesParDestinationPrincipaleEtSupprime(String destinationPrincipale, boolean supprimer);
+    CompletableFuture<List<Plot>> getPlotsByMainDestinationAndDeleted(String destinationPrincipale, boolean supprimer);
 }
